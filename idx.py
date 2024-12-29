@@ -2,6 +2,7 @@ import itertools
 import json
 from operator import attrgetter
 
+from commons.models.combo import Combo, ComboSize, ComboEffect
 from commons.models.enemy import Enemy
 from commons.models.lookup import object_hook_ability
 import commons.models.lookup as lookup
@@ -40,6 +41,11 @@ def setup():
   )
   maps = Index[Map](list(itertools.chain(*(cat.maps for cat in s))), attrgetter("name"), {})
   categories = {cat.id_: cat for cat in s}
+
+  combos: Index[Combo] = None  # TODO
+  combos_with: dict[int, list[tuple[int, Combo]]] = None
+  combo_sizes: list[ComboSize] = []
+  combo_effects: list[ComboEffect] = []
 
   with open('catbot/assets_cache/emojis.json') as fl:
     emojis = json.load(fl)

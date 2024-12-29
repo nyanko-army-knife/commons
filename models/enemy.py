@@ -33,6 +33,3 @@ class Enemy(Model):
   abilities: list[ActiveAbility] = field(default_factory=list)
   passives: Passives = field(default_factory=Passives)
   breakup: AttackBreakup = field(default_factory=AttackBreakup)
-
-
-enemies: Index[Enemy] = None

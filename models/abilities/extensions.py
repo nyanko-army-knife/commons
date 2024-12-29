@@ -19,7 +19,7 @@ class Wave(Extension):
   mini: bool = False
 
   def __str__(self):
-    return f"{self.chance}% chance to create a level {self.level} {"mini" if self.mini else ""}wave"
+    return f"{self.chance}% chance to create a level {self.level} {'mini' if self.mini else ''}wave"
 
 
 @dataclass
@@ -34,9 +34,9 @@ class Surge(Extension):
 
   def __str__(self):
     if self.range_width > 0:
-      return f"{self.chance}% chance to create a {"mini" if self.mini else ""}surge between {self.range_start // 4}~{(self.range_start + self.range_width) // 4} range"
+      return f"{self.chance}% chance to create a {'mini' if self.mini else ''}surge between {self.range_start // 4}~{(self.range_start + self.range_width) // 4} range"
     else:
-      return f"{self.chance}% chance to create a {"mini" if self.mini else ""}surge at {self.range_start // 4} range"
+      return f"{self.chance}% chance to create a {'mini' if self.mini else ''}surge at {self.range_start // 4} range"
 
 
 @dataclass
