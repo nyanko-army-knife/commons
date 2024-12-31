@@ -5,7 +5,7 @@ from commons.models.abilities.base import Ability
 from commons.models.base import Model
 
 
-class Immunity(str, Enum):
+class Proc(str, Enum):
   Wave = "wave"
   Knockback = "knockback"
   Freeze = "freeze"
@@ -19,15 +19,24 @@ class Immunity(str, Enum):
   Toxic = "toxic"
 
 
+@dataclass
+class Immunity(Ability):
+  _klass = "immunity"
+
+  to: Proc
+
+  def __str__(self):
+    return f"immune to {self.to}"
+
+@dataclass
 class Resist(Ability):
-  Wave: int = 0
-  Knockback: int = 0
-  Freeze: int = 0
-  Slow: int = 0
-  Weaken: int = 0
-  Surge: int = 0
-  Blast: int = 0
-  Curse: int = 0
+  _klass = "resistance"
+
+  to: Proc
+  amt: int
+
+  def __str__(self):
+    return f"resists {self.to} by {self.amt}%"
 
 
 class Defensive(Ability):
@@ -118,10 +127,44 @@ class Offensive(Ability):
 @dataclass
 class Suicide(Offensive):
   _klass = "suicide"
-
   def __str__(self):
     return f"suicides on hit"
 
+@dataclass
+class ZombieKiller(Offensive):
+  _klass = "zombie_killer"
+  def __str__(self):
+    return f"stops zombies from reviving on kill"
+
+@dataclass
+class SoulStrike(Offensive):
+  _klass = "soul_strike"
+  def __str__(self):
+    return f"attacks zombie corpses"
+
+@dataclass
+class DoubleBounty(Offensive):
+  _klass = "double_bounty"
+  def __str__(self):
+    return f"gains double cash on killing enemy"
+
+@dataclass
+class BarrierBreak(Offensive):
+  _klass = "barrier_break"
+
+  chance: int = 0
+
+  def __str__(self):
+    return f"{self.chance}% chance to break enemy barrier"
+
+@dataclass
+class ShieldBreak(Offensive):
+  _klass = "shield_break"
+
+  chance: int = 0
+
+  def __str__(self):
+    return f"{self.chance}% chance to break Aku shield"
 
 @dataclass
 class Critical(Offensive):

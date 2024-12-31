@@ -98,3 +98,10 @@ class Dodge(ActiveAbility):
 
   def __str__(self):
     return f"{self.chance}% chance to dodge for {self.duration}f"
+
+@dataclass
+class TargetOnly(ActiveAbility):
+  _klass = "target_only"
+
+  def __str__(self):
+    return f"only attacks its target traits"

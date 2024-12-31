@@ -6,6 +6,9 @@ class Index[T]:
   items: list[T]
   lookup_dict: dict[str, T]
 
+  def __getitem__(self, item) -> T:
+    return self.items[item]
+
   def __init__(self, items: list[T], namegetter: Callable[[T], str], aliases: dict[str, int]):
     self.items = items
     self.lookup_dict = {namegetter(x).lower(): x for x in items} | {K.lower(): items[V] for K, V in aliases.items()}

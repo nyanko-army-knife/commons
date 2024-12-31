@@ -1,4 +1,4 @@
-def csv_parse(reader, sep=',') -> list[list[int | str]]:
+def csv_parse(reader, sep=',', strict=False) -> list[list[int | str]]:
   rows = []
   for row in reader.read().splitlines():
     rows.append([])
@@ -7,5 +7,6 @@ def csv_parse(reader, sep=',') -> list[list[int | str]]:
       try:
         rows[-1].append(int(cell))
       except ValueError:
+        if strict: continue
         rows[-1].append(cell)
   return rows

@@ -3,11 +3,14 @@ from collections import defaultdict
 from dataclasses import dataclass, field
 from typing import Any
 
+from commons.models.base import Model
+
+
 @dataclass
-class Combo:
+class Combo(Model):
 	_klass="combo"
 
-	id: int = 0
+	id_: int = 0
 	cats: list[tuple[int, int]] = field(default_factory=list)
 	name: str = ""
 	size: "ComboSize" = None
@@ -18,19 +21,17 @@ class Combo:
 	def used(self):
 		return self.condition != -1
 
-
-
 @dataclass
-class ComboSize:
+class ComboSize(Model):
 	_klass="combo_size"
 
-	id: int = 0
+	id_: int = 0
 	name: str = ""
 
 @dataclass
-class ComboEffect:
+class ComboEffect(Model):
 	_klass="combo_effect"
-	id: int = 0
+	id_: int = 0
 	name: str = ""
 
 class ComboCondition(enum.Enum):
