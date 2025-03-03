@@ -18,8 +18,7 @@ def setup():
   for model in subclasses:
     if dataclasses.is_dataclass(model):
       try:
-        a = model()
-        model_lookup[a._klass] = model
+        model_lookup[model._klass] = model
       except AttributeError:
         pass
 

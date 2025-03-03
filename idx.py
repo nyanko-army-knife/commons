@@ -3,11 +3,12 @@ import json
 from operator import attrgetter
 
 import commons.models.lookup as lookup
-from commons.models.combo import Combo, ComboSize, ComboEffect
+from commons.models.combo import Combo, ComboSize, ComboEffect, ComboCondition
 from commons.models.enemy import Enemy
 from commons.models.lookup import object_hook_ability
 from commons.models.stage import Category, Map, Stage
-from commons.models.unit import Form, Cat
+from commons.models import Cat, Form
+from commons.models.talents import Talent
 from commons.utils.index import Index
 
 lookup.setup()
@@ -19,6 +20,7 @@ stages: Index[Stage]
 maps: Index[Map]
 categories: dict[str, Category]
 combos: Index[Combo]
+talents: dict[int, list[Talent]]
 
 
 def load_cats():
@@ -52,7 +54,16 @@ def load_combos():
 	global combos
 
 	with open('data/db/combos.json') as fl:
-		combos: Index[Combo] = json.load(fl, object_hook=object_hook_ability)
+		c = json.load(fl, object_hook=object_hook_ability)
+	print([x.name for x in c if type(x.name) == float])
+	combos = Index[Combo]([combo for combo in c if combo.condition != ComboCondition.UNUSED], attrgetter("name"), {})
+
+
+def load_talents():
+	global talents
+
+	with open('data/db/talents.json') as fl:
+		talents = {int(k):v for k, v in json.load(fl, object_hook=object_hook_ability).items()}
 
 
 def setup():
@@ -61,3 +72,5 @@ def setup():
 	load_cats()
 	load_stages()
 	load_enemies()
+	load_combos()
+	load_talents()

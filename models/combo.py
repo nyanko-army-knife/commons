@@ -34,7 +34,7 @@ class ComboEffect(Model):
 	id_: int = 0
 	name: str = ""
 
-class ComboCondition(enum.Enum):
+class ComboCondition(int, enum.Enum):
 	UNUSED = -1
 	EOC_1 = 1
 	EOC_2 = 2

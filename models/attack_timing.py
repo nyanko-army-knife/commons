@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from commons.models.base import Model
 
 
-def damage_scale(dmg, level_mult, treasure_mult):
+def damage_scale(dmg: int, level_mult: float, treasure_mult: float) -> int:
   base_dmg = dmg
   dmg = round(dmg * level_mult)
   dmg += int(dmg * treasure_mult)

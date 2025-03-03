@@ -1,8 +1,8 @@
 from dataclasses import dataclass, field
 from enum import Enum
 
-from commons.models.abilities.base import Ability
-from commons.models.base import Model
+from ..abilities.base import Ability
+from ..base import Model
 
 
 class Proc(str, Enum):
@@ -23,7 +23,7 @@ class Proc(str, Enum):
 class Immunity(Ability):
   _klass = "immunity"
 
-  to: Proc
+  to: Proc = None
 
   def __str__(self):
     return f"immune to {self.to}"
@@ -32,8 +32,8 @@ class Immunity(Ability):
 class Resist(Ability):
   _klass = "resistance"
 
-  to: Proc
-  amt: int
+  to: Proc = None
+  amt: int = 0
 
   def __str__(self):
     return f"resists {self.to} by {self.amt}%"
@@ -134,19 +134,19 @@ class Suicide(Offensive):
 class ZombieKiller(Offensive):
   _klass = "zombie_killer"
   def __str__(self):
-    return f"stops zombies from reviving on kill"
+    return f"zombie killer"
 
 @dataclass
 class SoulStrike(Offensive):
   _klass = "soul_strike"
   def __str__(self):
-    return f"attacks zombie corpses"
+    return f"soul strike"
 
 @dataclass
 class DoubleBounty(Offensive):
   _klass = "double_bounty"
   def __str__(self):
-    return f"gains double cash on killing enemy"
+    return f"double bounty"
 
 @dataclass
 class BarrierBreak(Offensive):
