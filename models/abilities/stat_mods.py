@@ -1,10 +1,9 @@
 # only used for talents
 from dataclasses import dataclass
-from operator import attrgetter, methodcaller
-from typing import Callable
 
 from commons.models.base import Model
 from commons.models.trait import Trait, PseudoTrait
+
 
 @dataclass
 class StatModAbs(Model):
@@ -21,6 +20,7 @@ class StatModAbs(Model):
 	def __str__(self):
 		return f"{self.val:+} {self.stat_name}"
 
+
 @dataclass
 class StatModRel(Model):
 	_klass = "stat_mod_rel"
@@ -30,11 +30,12 @@ class StatModRel(Model):
 
 	def apply(self, cat: 'Cat'):
 		base_val = cat.__getattribute__(self.stat_name)
-		new_val =  base_val * (1 + self.val / 100)
+		new_val = base_val * (1 + self.val / 100)
 		cat.__setattr__(self.stat_name, new_val)
 
 	def __str__(self):
 		return f"{self.val:+}% {self.stat_name}"
+
 
 @dataclass
 class AddTargets(Model):

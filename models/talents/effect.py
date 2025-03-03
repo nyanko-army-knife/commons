@@ -2,6 +2,7 @@ from dataclasses import dataclass
 
 from commons.models.base import Model
 
+
 @dataclass
 class Effect[T](Model):
 	_klass = 'effect'
@@ -13,11 +14,12 @@ class Effect[T](Model):
 		assert max_level >= level > 0
 		if level == 1: return self.level_1
 
-		diff = (self.level_max - self.level_1) / (max_level-1)
+		diff = (self.level_max - self.level_1) / (max_level - 1)
 		out = self.level_1
-		for i in range(level-1):
+		for i in range(level - 1):
 			out += diff
 		return out
+
 
 @dataclass
 class Talent[T](Model):

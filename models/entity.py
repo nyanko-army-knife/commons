@@ -5,6 +5,7 @@ from commons.models.attack_timing import AttackBreakup
 from commons.models.base import Model
 from commons.models.trait import Trait, PseudoTrait
 
+
 @dataclass
 class Entity(Model):
 	name: str = ""

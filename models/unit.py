@@ -5,7 +5,6 @@ from dataclasses import dataclass
 from commons.models.abilities.mult import Mult
 from commons.models.base import Model
 from commons.models.entity import Entity
-from commons.utils.lazy import Lazy
 
 
 @dataclass(kw_only=True)
