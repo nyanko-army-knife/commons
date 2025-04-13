@@ -14,5 +14,4 @@ class Enemy(Entity):
 		atk = hp if atk == 0 else atk
 		self.hp *= hp
 		self.atk *= atk
-		print(hp, atk)
 		return self

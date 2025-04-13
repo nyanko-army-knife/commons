@@ -20,7 +20,7 @@ class Form(Entity):
 		toret = deepcopy(self)
 		mult = 1 + sum(curve[i // 10] for i in range(1, level)) / 100
 		toret.breakup = toret.breakup.scale(mult, 1.5)
-		toret.atk = sum(hit.damage for hit in toret.breakup.hits())
+		toret.atk = int(sum(hit.damage for hit in toret.breakup.hits()))
 		toret.hp = int(round(toret.hp * mult) * 2.5)
 		toret.cost = int(toret.cost * 1.5)
 		toret.cooldown = max(toret.cooldown * 2 - 264, 48)  # (research_level - 1) * 6 + treasures * 30

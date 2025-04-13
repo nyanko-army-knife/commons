@@ -14,7 +14,7 @@ from commons.utils.index import Index
 lookup.setup()
 
 enemies: Index[Enemy]
-units: list[Cat]
+units: Index[Cat]
 forms: Index[Form]
 stages: Index[Stage]
 maps: Index[Map]
@@ -28,7 +28,7 @@ def load_cats():
 
 	with open('data/db/cats.json') as fl:
 		c: list[Cat] = json.load(fl, object_hook=object_hook_ability)
-	units = c
+	units = Index[Cat](c, lambda x: str(x.id_), {})
 	forms = Index[Form](list(itertools.chain(*(cat.forms() for cat in c if cat is not None))), attrgetter("name"), {})
 
 

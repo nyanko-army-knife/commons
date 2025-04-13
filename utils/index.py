@@ -11,7 +11,7 @@ class Index[T]:
 
 	def __init__(self, items: list[T], namegetter: Callable[[T], str], aliases: dict[str, int]):
 		self.items = items
-		self.lookup_dict = {namegetter(x).lower(): x for x in items} | {K.lower(): items[V] for K, V in aliases.items()}
+		self.lookup_dict = {namegetter(x).lower(): x for x in items if x is not None} | {K.lower(): items[V] for K, V in aliases.items()}
 		self.namegetter = namegetter
 
 	def lookup(self, target: str) -> T:
