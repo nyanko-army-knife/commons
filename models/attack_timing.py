@@ -49,7 +49,7 @@ class AttackBreakup(Model):
 		out += f'backswing: {self.backswing}f, TBA: {self.tba}f\n'
 		return out
 
-	def scale(self, level_mult: float, treasure_mult: float) -> 'AttackBreakup':
+	def scale(self, level_mult: float, treasure_mult: float = 0) -> 'AttackBreakup':
 		toret = deepcopy(self)
 		if toret.hit_0 is not None: toret.hit_0.damage = damage_scale(toret.hit_0.damage, level_mult, treasure_mult)
 		if toret.hit_1 is not None: toret.hit_1.damage = damage_scale(toret.hit_1.damage, level_mult, treasure_mult)

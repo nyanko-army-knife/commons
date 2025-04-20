@@ -1,3 +1,4 @@
+from copy import deepcopy
 from dataclasses import dataclass
 
 from .entity import Entity
@@ -10,8 +11,10 @@ class Enemy(Entity):
 	id_: int = 0
 	drop: int = 0
 
-	def apply_mag(self, hp: int, atk: int = 0) -> 'Enemy':
+	def to_mag(self, hp: int, atk: int = 0) -> 'Enemy':
 		atk = hp if atk == 0 else atk
-		self.hp *= hp
-		self.atk *= atk
-		return self
+		toret = deepcopy(self)
+		toret.hp = int(self.hp * (hp / 100))
+		toret.breakup = toret.breakup.scale(atk / 100)
+		toret.atk = int(sum(hit.damage for hit in toret.breakup.hits()))
+		return toret
