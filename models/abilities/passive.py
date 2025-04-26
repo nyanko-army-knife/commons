@@ -49,7 +49,7 @@ class CounterSurge(Defensive):
 	_klass = "counter_surge"
 
 	def __str__(self):
-		return f"has counter surge"
+		return "has counter surge"
 
 
 @dataclass
@@ -57,7 +57,7 @@ class WaveBlock(Defensive):
 	_klass = "wave_block"
 
 	def __str__(self):
-		return f"has wave block"
+		return "has wave block"
 
 
 @dataclass
@@ -130,7 +130,7 @@ class Suicide(Offensive):
 	_klass = "suicide"
 
 	def __str__(self):
-		return f"suicides on hit"
+		return "suicides on hit"
 
 
 @dataclass
@@ -138,7 +138,7 @@ class ZombieKiller(Offensive):
 	_klass = "zombie_killer"
 
 	def __str__(self):
-		return f"zombie killer"
+		return "zombie killer"
 
 
 @dataclass
@@ -146,7 +146,7 @@ class SoulStrike(Offensive):
 	_klass = "soul_strike"
 
 	def __str__(self):
-		return f"soul strike"
+		return "soul strike"
 
 
 @dataclass
@@ -154,7 +154,15 @@ class DoubleBounty(Offensive):
 	_klass = "double_bounty"
 
 	def __str__(self):
-		return f"double bounty"
+		return "double bounty"
+
+
+@dataclass
+class BaseDestroyer(Offensive):
+	_klass = "base_destroyer"
+
+	def __str__(self):
+		return "base destroyer"
 
 
 @dataclass

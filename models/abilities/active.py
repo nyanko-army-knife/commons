@@ -105,4 +105,4 @@ class TargetOnly(ActiveAbility):
 	_klass = "target_only"
 
 	def __str__(self):
-		return f"only attacks its target traits"
+		return "only attacks its target traits"

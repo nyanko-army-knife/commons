@@ -26,6 +26,10 @@ class Form(Entity):
 		toret.cooldown = max(toret.cooldown * 2 - 264, 48)  # (research_level - 1) * 6 + treasures * 30
 		return toret
 
+	@property
+	def id_char(self):
+		return 'fcsu'[self.id_[-1]]
+
 
 @dataclass
 class Cat(Model):
@@ -49,7 +53,6 @@ class Cat(Model):
 
 		fill_cat_curve = apply_level_curve(level, self.level_curve)
 
-		# ill remove the lazy stuff if it's ever unstable
 		if toret.form_base:
 			toret.form_base = fill_cat_curve(toret.form_base.to_level)()
 		if toret.form_evolved:
