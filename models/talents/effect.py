@@ -1,10 +1,11 @@
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, TypeVar, Optional
+from typing import TYPE_CHECKING, Optional, TypeVar
 
 from commons.models.base import Model
-from extractors import c
+
+from ... import c
 from .. import ActiveAbility, Extension
-from ..abilities import Defensive, Offensive, StatMod, Immunity, Resist
+from ..abilities import Defensive, Immunity, Offensive, Resist, StatMod
 
 if TYPE_CHECKING:
 	from ..unit import Form
