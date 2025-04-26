@@ -67,5 +67,5 @@ class Talent[T](Model):
 				case Resist():
 					cat.passives.resists.append(e)
 				case _:
-					c.logger.error("unknown effect", e)
+					c.logger.error(f"unknown effect {e}")
 		return cat
