@@ -1,7 +1,7 @@
-from enum import Enum
+from enum import StrEnum
 
 
-class Mult(str, Enum):
+class Mult(StrEnum):
 	Strong = "strong"
 	Resist = "resist"
 	MassiveDmg = "massive_dmg"

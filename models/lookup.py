@@ -1,4 +1,5 @@
 import dataclasses
+from typing import Any
 
 from commons.models.base import Model
 
@@ -19,12 +20,12 @@ def setup():
 	for model in subclasses:
 		if dataclasses.is_dataclass(model):
 			try:
-				model_lookup[model._klass] = model
+				model_lookup[model.klass()] = model
 			except AttributeError:
 				pass
 
 
-def object_hook_ability(dct: dict[str, any]):
+def object_hook_ability(dct: dict[str, Any]):
 	if '_klass' in dct:
 		name = dct.pop("_klass")
 		return model_lookup[name](**dct)

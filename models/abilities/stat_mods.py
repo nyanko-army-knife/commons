@@ -1,19 +1,19 @@
 # only used for talents
 from dataclasses import dataclass
-
-from .base import Ability
-from commons.models.base import Model
-from commons.models.trait import Trait, PseudoTrait
-
 from typing import TYPE_CHECKING
 
+from commons.models.trait import Trait, PseudoTrait
+from .base import Ability
+
 if TYPE_CHECKING:
-	from commons.models.unit import Cat, Form
+	from commons.models.unit import Form
+
 
 @dataclass
 class StatMod(Ability):
 	def apply(self, cat: 'Form'):
 		pass
+
 
 @dataclass
 class StatModAbs(StatMod):

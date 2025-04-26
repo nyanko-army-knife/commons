@@ -19,6 +19,7 @@ class Index[T]:
 
 	@lru_cache(maxsize=1 << 10)
 	def lookup(self, target: str) -> T:
+		# noinspection PyTypeChecker
 		name, score, key = rapidfuzz.process.extractOne(target, self.lookup_dict.keys(), scorer=rapidfuzz.fuzz.QRatio)
 		if score > 85:
 			return self.lookup_dict[name]
@@ -28,6 +29,7 @@ class Index[T]:
 
 	@lru_cache(maxsize=1 << 10)
 	def lookup_with_score(self, target: str) -> tuple[T, float]:
+		# noinspection PyTypeChecker
 		name, score, key = rapidfuzz.process.extractOne(target, self.lookup_dict.keys(), scorer=rapidfuzz.fuzz.QRatio)
 		if score > 85:
 			return self.lookup_dict[name], score

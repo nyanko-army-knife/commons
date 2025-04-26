@@ -55,7 +55,6 @@ def load_combos():
 
 	with open('data/db/combos.json') as fl:
 		c = json.load(fl, object_hook=object_hook_ability)
-	print([x.name for x in c if type(x.name) == float])
 	combos = Index[Combo]([combo for combo in c if combo.condition != ComboCondition.UNUSED], attrgetter("name"), {})
 
 

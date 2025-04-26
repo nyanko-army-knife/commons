@@ -1,12 +1,15 @@
 from dataclasses import dataclass
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, TypeVar, Optional
 
 from commons.models.base import Model
+from extractors import c
 from .. import ActiveAbility, Extension
 from ..abilities import Defensive, Offensive, StatMod, Immunity, Resist
 
 if TYPE_CHECKING:
 	from ..unit import Form
+
+T = TypeVar('T')
 
 
 @dataclass
@@ -14,7 +17,7 @@ class Effect[T](Model):
 	_klass = 'effect'
 
 	level_1: T
-	level_max: T
+	level_max: Optional[T]
 
 	def get_level(self, level: int, max_level: int) -> T:
 		if not (max_level >= level > 0): level = max_level
@@ -41,7 +44,7 @@ class Talent[T](Model):
 	def apply_level_to(self, level: int, cat: 'Form') -> 'Form':
 		def upsert(elems: list, new_elem):
 			for i, elem in enumerate(elems):
-				if elem._klass == new_elem._klass:
+				if elem.klass() == new_elem.klass():
 					elems[i] = elem + new_elem
 					return
 			elems.append(new_elem)
@@ -64,5 +67,5 @@ class Talent[T](Model):
 				case Resist():
 					cat.passives.resists.append(e)
 				case _:
-					print("idk", e)
+					c.logger.error("unknown effect", e)
 		return cat

@@ -34,9 +34,11 @@ class Surge(Extension):
 
 	def __str__(self):
 		if self.range_width > 0:
-			return f"{self.chance}% chance to create a level {self.level} {'mini' if self.mini else ''}surge between {self.range_start // 4:.0f}~{(self.range_start + self.range_width) // 4:.0f} range"
+			return (f"{self.chance}% chance to create a level {self.level} {'mini' if self.mini else ''}"
+							f"surge between {self.range_start // 4:.0f}~{(self.range_start + self.range_width) // 4:.0f} range")
 		else:
-			return f"{self.chance}% chance to create a level {self.level} {'mini' if self.mini else ''}surge at {self.range_start // 4:.0f} range"
+			return (f"{self.chance}% chance to create a level {self.level} {'mini' if self.mini else ''}"
+							f"surge at {self.range_start // 4:.0f} range")
 
 
 @dataclass
@@ -54,6 +56,7 @@ class Blast(Extension):
 
 	def __str__(self):
 		if self.range_width > 0:
-			return f"{self.chance}% chance to create a blast between {self.range_start // 4}~{(self.range_start + self.range_width) // 4} range"
+			return (f"{self.chance}% chance to create a blast between "
+							f"{self.range_start // 4}~{(self.range_start + self.range_width) // 4} range")
 		else:
 			return f"{self.chance}% chance to create a blast at {self.range_start // 4} range"

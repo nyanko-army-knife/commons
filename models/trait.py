@@ -1,7 +1,7 @@
-from enum import Enum
+from enum import StrEnum
 
 
-class Trait(str, Enum):
+class Trait(StrEnum):
 	red = "red"
 	floating = "floating"
 	black = "black"
@@ -14,7 +14,7 @@ class Trait(str, Enum):
 	aku = "aku"
 
 
-class PseudoTrait(str, Enum):
+class PseudoTrait(StrEnum):
 	base = "base"
 	witch = "witch"
 	eva_angel = "eva angel"

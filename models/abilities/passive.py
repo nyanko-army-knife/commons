@@ -1,11 +1,11 @@
 from dataclasses import dataclass, field
-from enum import Enum
+from enum import StrEnum
 
 from ..abilities.base import Ability
 from ..base import Model
 
 
-class Proc(str, Enum):
+class Proc(StrEnum):
 	Wave = "wave"
 	Knockback = "knockback"
 	Freeze = "freeze"

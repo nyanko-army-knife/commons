@@ -48,8 +48,8 @@ class Cat(Model):
 	def to_level(self, level: int) -> 'Cat':
 		toret = deepcopy(self)
 
-		def apply_level_curve(l: int, curve):
-			return lambda f: functools.partial(f, l, curve)
+		def apply_level_curve(to_level: int, curve):
+			return lambda f: functools.partial(f, to_level, curve)
 
 		fill_cat_curve = apply_level_curve(level, self.level_curve)
 
