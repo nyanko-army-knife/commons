@@ -22,12 +22,21 @@ class Hit(Model):
 	range_width: int = 0
 	foreswing: int = 0
 
+	# replaces foreswing with delay
+	def after(self, other: 'Hit') -> 'Hit':
+		toret = deepcopy(self)
+		toret.foreswing -= other.foreswing
+		return toret
+
 	def __str__(self):
-		out = f'{self.foreswing}f: {self.damage}'
+		out = f'{self.foreswing}f: '
+		if self.use_ability:
+			out += f"**__{self.damage}__**"
+		else:
+			out += f"{self.damage}"
+
 		if self.separate_range:
 			out += f' [{self.range_start}~{self.range_start + self.range_width}]'
-		if self.use_ability:
-			out = f"_{out}_"
 		return out
 
 
@@ -43,10 +52,10 @@ class AttackBreakup(Model):
 
 	def __str__(self):
 		out = ""
-		for hit in self.hit_0, self.hit_1, self.hit_2:
-			if hit is not None:
-				out += str(hit) + '\n'
-		out += f'backswing: {self.backswing}f, TBA: {self.tba}f\n'
+		out += f" ↑{self.hit_0}\n"
+		out += f" ↑{self.hit_1.after(self.hit_0)}\n"
+		out += f" ↑{self.hit_2.after(self.hit_1)}\n"
+		out += f' ↓{self.backswing}f / ⏲{self.tba}f\n'
 		return out
 
 	def scale(self, level_mult: float, treasure_mult: float = 0) -> 'AttackBreakup':

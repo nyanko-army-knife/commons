@@ -215,6 +215,15 @@ class Burrow(Offensive):
 
 
 @dataclass
+class Conjure(Offensive):
+	_klass = "conjure"
+	spirit_id: int = 0
+
+	def __str__(self):
+		return f"conjures spirit ID {self.spirit_id}"
+
+
+@dataclass
 class Passives(Model):
 	_klass = "passives"
 	immunities: list[Immunity] = field(default_factory=list)
