@@ -119,6 +119,14 @@ class BehemothDodge(Defensive):
 		return f"{self.chance}% chance to dodge behemoth attacks for {self.duration}f"
 
 
+@dataclass
+class Metal(Defensive):
+	_klass = "metal"
+
+	def __str__(self):
+		return "metal"
+
+
 # --- #
 @dataclass
 class Offensive(Ability):
@@ -221,6 +229,15 @@ class Conjure(Offensive):
 
 	def __str__(self):
 		return f"conjures spirit ID {self.spirit_id}"
+
+
+@dataclass
+class MetalKiller(Offensive):
+	_klass = "metal_killer"
+	percent: int = 0
+
+	def __str__(self):
+		return f"deals metal killer damage equal to {self.percent}% of enemy's current HP"
 
 
 @dataclass
