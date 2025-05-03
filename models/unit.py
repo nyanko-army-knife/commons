@@ -1,10 +1,26 @@
 import functools
 from copy import deepcopy
 from dataclasses import dataclass
+from enum import IntEnum
 
 from commons.models.abilities.mult import Mult
 from commons.models.base import Model
 from commons.models.entity import Entity
+
+
+class Rarity(IntEnum):
+	NORMAL = 0
+	SPECIAL = 1
+	RARE = 2
+	SUPER_RARE = 3
+	UBER_RARE = 4
+	LEGEND_RARE = 5
+
+
+class UnlockMethod(IntEnum):
+	STAGE = 0
+	BUY = 1
+	GACHA = 2
 
 
 @dataclass(kw_only=True)
@@ -36,6 +52,14 @@ class Cat(Model):
 	_klass = "cat"
 	id_: int = 0
 	level_curve: list[int] = None
+	xp_curve: list[int] = None
+	rarity: Rarity = None
+	tf_reqs: list[tuple[int, int]] = None
+	tf_xp: int = 0
+	uf_reqs: list[tuple[int, int]] = None
+	uf_xp: int = 0
+	max_level: tuple[int, int, int] = None
+	unlock_method: UnlockMethod = None
 
 	form_base: Form = None
 	form_evolved: Form = None
