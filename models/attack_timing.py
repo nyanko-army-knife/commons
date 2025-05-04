@@ -54,7 +54,7 @@ class AttackBreakup(Model):
 		out = ""
 		out += f" ↑{self.hit_0}\n"
 		out += f" ↑{self.hit_1.after(self.hit_0)}\n"
-		out += f" ↑{self.hit_2.after(self.hit_1)}\n"
+		if self.hit_2: out += f" ↑{self.hit_2.after(self.hit_1)}\n"
 		out += f' ↓{self.backswing}f / ⏲{self.tba}f\n'
 		return out
 
