@@ -30,6 +30,7 @@ class Index[T]:
 
 	@lru_cache(maxsize=1 << 10)
 	def lookup(self, target: str) -> T:
+		target = target.lower()
 		# noinspection PyTypeChecker
 		name, score, key = rapidfuzz.process.extractOne(target, self.lookup_dict.keys(), scorer=rapidfuzz.fuzz.QRatio)
 		if score >= QUICK_THRESHOLD:
@@ -40,6 +41,7 @@ class Index[T]:
 
 	@lru_cache(maxsize=1 << 10)
 	def lookup_with_score(self, target: str) -> tuple[T, float]:
+		target = target.lower()
 		# noinspection PyTypeChecker
 		name, score, key = rapidfuzz.process.extractOne(target, self.lookup_dict.keys(), scorer=rapidfuzz.fuzz.QRatio)
 		if score >= QUICK_THRESHOLD:
@@ -50,6 +52,7 @@ class Index[T]:
 
 	@lru_cache(maxsize=1 << 10)
 	def lookup_debug(self, target: str, force_quick: bool = False) -> (bool, list[Lookup]):
+		target = target.lower()
 		# noinspection PyTypeChecker
 		lookups: list[Lookup] = [Lookup(*x) for x in
 														 rapidfuzz.process.extract(target, self.lookup_dict.keys(), scorer=rapidfuzz.fuzz.QRatio)]

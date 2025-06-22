@@ -16,11 +16,19 @@ class Rarity(IntEnum):
 	UBER_RARE = 4
 	LEGEND_RARE = 5
 
+	@property
+	def label(self):
+		return self.name.title().replace("_", " ")
+
 
 class UnlockMethod(IntEnum):
 	STAGE = 0
 	BUY = 1
 	GACHA = 2
+
+	@property
+	def label(self):
+		return self.name.title().replace("_", " ")
 
 
 @dataclass(kw_only=True)
@@ -55,10 +63,12 @@ class Cat(Model):
 	xp_curve: list[int] = None
 	rarity: Rarity = None
 	tf_reqs: list[tuple[int, int]] = None
+	tf_level: int = 0
 	tf_xp: int = 0
 	uf_reqs: list[tuple[int, int]] = None
+	uf_level: int = 0
 	uf_xp: int = 0
-	max_level: tuple[int, int, int] = None
+	max_level: tuple[int, int, int] = None  # max level, max level with catseyes, max plus level
 	unlock_method: UnlockMethod = None
 
 	form_base: Form = None
@@ -66,8 +76,38 @@ class Cat(Model):
 	form_true: Form = None
 	form_ultra: Form = None
 
+	@property
+	def levelcap(self):
+		return self.max_level[1] + self.max_level[2]
+
 	def forms(self) -> list[Form]:
 		return [form for form in (self.form_base, self.form_evolved, self.form_true, self.form_ultra) if form is not None]
+
+	def form_to_level(self, try_form_id: int, try_level: int, upcast: bool = False) -> (Form, int):
+		"""
+		will downcast level to max level and return said level.
+		will downcast forms if level is insufficient.
+		if told to upcast, will upcast level instead of downcasting form.
+		"""
+		try_level = min(try_level, self.levelcap)
+		try_form_id %= len(self.forms())
+		level, form_id = try_level, try_form_id
+
+		if not upcast:  # we are sure about level
+			if level < 10:
+				form_id = 0
+			elif level < max(20, self.tf_level):
+				form_id = min(1, try_form_id)
+			elif level < self.uf_level:
+				form_id = min(2, try_form_id)
+		else:  # we are sure about form_id
+			if form_id == 1 and try_level < 10:
+				level = 10
+			if try_form_id == 2 and try_level < max(20, self.tf_level):
+				level = max(20, self.tf_level)
+			elif try_form_id == 3 and try_level < self.uf_level:
+				level = self.uf_level
+		return self[form_id].to_level(level, self.level_curve), level
 
 	def to_level(self, level: int) -> 'Cat':
 		toret = deepcopy(self)
