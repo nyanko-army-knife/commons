@@ -3,9 +3,10 @@ import json
 from operator import attrgetter
 
 import commons.models.lookup as lookup
-from commons.models import Cat, Form
+from commons.models import Cat, Form, Gacha
 from commons.models.combo import Combo, ComboCondition
 from commons.models.enemy import Enemy
+from commons.models.item import Item
 from commons.models.lookup import object_hook_ability
 from commons.models.stage import Category, Map, Stage
 from commons.models.talents import Talent
@@ -21,6 +22,8 @@ maps: Index[Map]
 categories: dict[str, Category]
 combos: Index[Combo]
 talents: dict[int, list[Talent]]
+items: dict[int, Item]
+gacha: dict[str, Gacha]
 
 
 def load_cats():
@@ -64,12 +67,24 @@ def load_talents():
 	with open('data/db/talents.json') as fl:
 		talents = {int(k): v for k, v in json.load(fl, object_hook=object_hook_ability).items()}
 
+def load_items():
+	global items
+
+	with open('data/db/items.json') as fl:
+		items = {item.id_: item for item in json.load(fl, object_hook=object_hook_ability)}
+
+def load_gacha():
+	global gacha
+
+	with open('data/db/gachas.json') as fl:
+		gacha = {f"{item.category}{item.id_:03}": item for item in json.load(fl, object_hook=object_hook_ability)}
+
 
 def setup():
-	global enemies, units, forms, stages, maps, categories
-
 	load_cats()
 	load_stages()
 	load_enemies()
 	load_combos()
 	load_talents()
+	load_items()
+	load_gacha()

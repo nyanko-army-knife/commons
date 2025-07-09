@@ -1,4 +1,5 @@
 import dataclasses
+from datetime import datetime
 from typing import Any
 
 from commons.models.base import Model
@@ -26,6 +27,18 @@ def setup():
 
 
 def object_hook_ability(dct: dict[str, Any]):
+	for k, v in dct.items():
+		if isinstance(v, str):
+			try:
+				dct[k] = datetime.fromisoformat(v)
+			except ValueError:
+				pass
+		else:
+			try:
+				x = list(map(datetime.fromisoformat, v))
+				if len(x): dct[k] = x
+			except (TypeError, ValueError):
+				pass
 	if '_klass' in dct:
 		name = dct.pop("_klass")
 		return model_lookup[name](**dct)
