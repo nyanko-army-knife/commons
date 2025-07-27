@@ -1,12 +1,11 @@
-from dataclasses import dataclass, field
+from msgspec import field
 
-from commons.models.abilities import Extension, ActiveAbility, Passives
+from commons.models.abilities import ActiveAbility, Extension, Passives
 from commons.models.attack_timing import AttackBreakup
 from commons.models.base import Model
-from commons.models.trait import Trait, PseudoTrait
+from commons.models.trait import PseudoTrait, Trait
 
 
-@dataclass
 class Entity(Model):
 	name: str = ""
 	description: str = ""

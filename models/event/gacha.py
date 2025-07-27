@@ -1,4 +1,3 @@
-from dataclasses import dataclass
 
 from commons.models import Model
 
@@ -26,7 +25,7 @@ REINFORCEMENTS = {
 	"239": "R",
 }
 
-@dataclass
+
 class Gacha(Model):
 	_klass="Gacha"
 

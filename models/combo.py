@@ -1,36 +1,14 @@
 import enum
-from dataclasses import dataclass, field
 
 from commons.models.base import Model
 
 
-@dataclass
-class Combo(Model):
-	_klass = "combo"
-
-	id_: int = 0
-	cats: list[tuple[int, int]] = field(default_factory=list)
-	name: str = ""
-	size: "ComboSize" = None
-	effect: "ComboEffect" = None
-	condition: "ComboCondition" = None
-
-	@property
-	def used(self):
-		return self.condition != -1
-
-
-@dataclass
 class ComboSize(Model):
-	_klass = "combo_size"
-
 	id_: int = 0
 	name: str = ""
 
 
-@dataclass
 class ComboEffect(Model):
-	_klass = "combo_effect"
 	id_: int = 0
 	name: str = ""
 
@@ -49,3 +27,16 @@ class ComboCondition(enum.IntEnum):
 	UR_2700 = 10001
 	UR_1450 = 10002
 	UR_2150 = 10003
+
+
+class Combo(Model):
+	id_: int
+	cats: list[tuple[int, int]]
+	name: str
+	size: ComboSize
+	effect: ComboEffect
+	condition: ComboCondition
+
+	@property
+	def used(self):
+		return self.condition != -1

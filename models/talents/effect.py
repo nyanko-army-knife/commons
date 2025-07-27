@@ -1,28 +1,35 @@
-from dataclasses import dataclass
-from typing import TYPE_CHECKING, Optional, TypeVar
+from typing import TYPE_CHECKING, Optional
 
 from commons.models.base import Model
 
 from ... import c
 from .. import ActiveAbility, Extension
-from ..abilities import Defensive, Immunity, Offensive, Resist, StatMod
+from ..abilities import (
+	BaseActiveAbility,
+	BaseDefensive,
+	BaseExtension,
+	BaseOffensive,
+	BaseStatMod,
+	Defensive,
+	Immunity,
+	Offensive,
+	Resist,
+	StatMod,
+)
 
 if TYPE_CHECKING:
 	from ..unit import Form
 
-T = TypeVar('T')
+type EffectAbility = Offensive | Defensive | ActiveAbility | StatMod | Extension | Immunity | Resist
 
 
-@dataclass
-class Effect[T](Model):
-	_klass = 'effect'
-
+class Effect[T: EffectAbility](Model):
 	level_1: T
 	level_max: Optional[T]
 
 	def get_level(self, level: int, max_level: int) -> T:
 		if not (max_level >= level > 0): level = max_level
-		if level == 1: return self.level_1
+		if level == 1 or self.level_max is None: return self.level_1
 
 		diff = (self.level_max - self.level_1) // (max_level - 1)
 		out = self.level_1
@@ -31,11 +38,8 @@ class Effect[T](Model):
 		return out
 
 
-@dataclass
-class Talent[T](Model):
-	_klass = 'talent'
-
-	effects: list[Effect[T]]
+class Talent(Model):
+	effects: list[Effect[EffectAbility]]
 	np_curve: list[int]
 	name: str
 	text: str
@@ -45,7 +49,7 @@ class Talent[T](Model):
 	def apply_level_to(self, level: int, cat: 'Form') -> 'Form':
 		def upsert(elems: list, new_elem):
 			for i, elem in enumerate(elems):
-				if elem.klass() == new_elem.klass():
+				if type(elem) is type(new_elem):
 					elems[i] = elem + new_elem
 					return
 			elems.append(new_elem)
@@ -53,15 +57,15 @@ class Talent[T](Model):
 		for effect in self.effects:
 			e = effect.get_level(level, self.max_level)
 			match e:
-				case Defensive():
+				case BaseDefensive():
 					upsert(cat.passives.defensives, e)
-				case Offensive():
+				case BaseOffensive():
 					upsert(cat.passives.offensives, e)
-				case StatMod():
+				case BaseStatMod():
 					e.apply(cat)
-				case ActiveAbility():
+				case BaseActiveAbility():
 					upsert(cat.abilities, e)
-				case Extension():
+				case BaseExtension():
 					upsert(cat.extensions, e)
 				case Immunity():
 					cat.passives.immunities.append(e)

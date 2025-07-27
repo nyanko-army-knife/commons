@@ -1,4 +1,4 @@
-def csv_parse(reader, sep=',', strict=False) -> list[list[int | str]]:
+def csv_parse(reader, sep=',', strict=False) -> list[list[int]]:
 	rows = []
 	for row in reader.read().splitlines():
 		rows.append([])

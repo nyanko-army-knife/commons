@@ -1,9 +1,8 @@
-from dataclasses import dataclass, field
+from msgspec import field
 
 from commons.models.base import Model
 
 
-@dataclass
 class Schematic(Model):
 	_klass = "schematic"
 
@@ -43,10 +42,9 @@ class Schematic(Model):
 		return "∞" if self.quantity == 0 else f"{self.quantity}"
 
 
-@dataclass
 class Stage(Model):
 	_klass = "stage"
-	id_: tuple[str, int, int] = None
+	id_: tuple[str, int, int] = ("", -1, -1)
 	name: str = ''
 
 	castle_id: int = 0
@@ -66,17 +64,16 @@ class Stage(Model):
 	time_limit: int = 0  # dojo only
 	boss_shield: bool = False
 
-	schematics: list[Schematic] = None
+	schematics: list[Schematic] = field(default_factory=list)
 
 	@property
 	def id_str(self):
 		return f"{self.id_[0]}-{self.id_[1]:03}-{self.id_[2]:02}"
 
 
-@dataclass
 class Map(Model):
 	_klass = "map_"
-	id_: tuple[str, int] = None
+	id_: tuple[str, int] = ("", -1)
 	name: str = ''
 
 	stages: list[Stage] = field(default_factory=list)
@@ -86,7 +83,6 @@ class Map(Model):
 		return f"{self.id_[0]}-{self.id_[1]:03}"
 
 
-@dataclass
 class Category(Model):
 	_klass = "category"
 	id_: str = ""

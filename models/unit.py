@@ -1,10 +1,12 @@
 import functools
 from copy import deepcopy
-from dataclasses import dataclass
 from enum import IntEnum
+from typing import Optional, Self
 
+from msgspec import field
+
+from commons.models import Model
 from commons.models.abilities.mult import Mult
-from commons.models.base import Model
 from commons.models.entity import Entity
 
 
@@ -31,12 +33,21 @@ class UnlockMethod(IntEnum):
 		return self.name.title().replace("_", " ")
 
 
-@dataclass(kw_only=True)
-class Form(Entity):
-	_klass = "form"
-	id_: tuple[int, int] = None
+class FormID(IntEnum):
+	BASE = 0
+	EVOLVED = 1
+	TRUE = 2
+	ULTRA = 3
 
-	mults: list[Mult] = None
+	@property
+	def label(self):
+		return self.name.title().replace("_", " ")
+
+
+class Form(Entity):
+	id_: tuple[int, FormID] = (-1, FormID.BASE)
+
+	mults: list[Mult] = field(default_factory=list)
 	cooldown: int = 0
 	cost: int = 0
 
@@ -55,26 +66,24 @@ class Form(Entity):
 		return 'fcsu'[self.id_[-1]]
 
 
-@dataclass
 class Cat(Model):
-	_klass = "cat"
 	id_: int = 0
-	level_curve: list[int] = None
-	xp_curve: list[int] = None
-	rarity: Rarity = None
-	tf_reqs: list[tuple[int, int]] = None
+	level_curve: list[int] = field(default_factory=list)
+	xp_curve: list[int] = field(default_factory=list)
+	rarity: Rarity = Rarity.NORMAL
+	tf_reqs: list[tuple[int, int]] = field(default_factory=list)
 	tf_level: int = 0
 	tf_xp: int = 0
-	uf_reqs: list[tuple[int, int]] = None
+	uf_reqs: list[tuple[int, int]] = field(default_factory=list)
 	uf_level: int = 0
 	uf_xp: int = 0
-	max_level: tuple[int, int, int] = None  # max level, max level with catseyes, max plus level
-	unlock_method: UnlockMethod = None
+	max_level: tuple[int, int, int] = (-1, -1, -1)  # max level, max level with catseyes, max plus level
+	unlock_method: UnlockMethod = UnlockMethod.BUY
 
-	form_base: Form = None
-	form_evolved: Form = None
-	form_true: Form = None
-	form_ultra: Form = None
+	form_base: Optional[Form] = None
+	form_evolved: Optional[Form] = None
+	form_true: Optional[Form] = None
+	form_ultra: Optional[Form] = None
 
 	@property
 	def levelcap(self):
@@ -83,33 +92,33 @@ class Cat(Model):
 	def forms(self) -> list[Form]:
 		return [form for form in (self.form_base, self.form_evolved, self.form_true, self.form_ultra) if form is not None]
 
-	def form_to_level(self, try_form_id: int, try_level: int, upcast: bool = False) -> (Form, int):
+	def form_to_level(self, try_form_id: int, try_level: int, upcast: bool = False) -> tuple[Form, int]:
 		"""
 		will downcast level to max level and return said level.
 		will downcast forms if level is insufficient.
 		if told to upcast, will upcast level instead of downcasting form.
 		"""
 		try_level = min(try_level, self.levelcap)
-		try_form_id %= len(self.forms())
+		try_form_id = try_form_id % len(self.forms())
 		level, form_id = try_level, try_form_id
 
 		if not upcast:  # we are sure about level
 			if level < 10:
-				form_id = 0
+				form_id = FormID.BASE
 			elif level < max(20, self.tf_level):
-				form_id = min(1, try_form_id)
+				form_id = min(FormID.EVOLVED.value, try_form_id)
 			elif level < self.uf_level:
-				form_id = min(2, try_form_id)
+				form_id = min(FormID.TRUE.value, try_form_id)
 		else:  # we are sure about form_id
-			if form_id == 1 and try_level < 10:
+			if form_id == FormID.EVOLVED and try_level < 10:
 				level = 10
-			if try_form_id == 2 and try_level < max(20, self.tf_level):
+			if try_form_id == FormID.TRUE and try_level < max(20, self.tf_level):
 				level = max(20, self.tf_level)
-			elif try_form_id == 3 and try_level < self.uf_level:
+			elif try_form_id == FormID.ULTRA and try_level < self.uf_level:
 				level = self.uf_level
 		return self[form_id].to_level(level, self.level_curve), level
 
-	def to_level(self, level: int) -> 'Cat':
+	def to_level(self, level: int) -> Self:
 		toret = deepcopy(self)
 
 		def apply_level_curve(to_level: int, curve):

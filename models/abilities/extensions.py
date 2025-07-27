@@ -1,19 +1,16 @@
 # abilities that extend the attack's effect
-
-from dataclasses import dataclass
+from typing import Union
 
 from commons.models.abilities.base import Ability
 
+type Extension = Union[Wave, Surge, DeathSurge, Blast]
 
-@dataclass
-class Extension(Ability):
+
+class BaseExtension(Ability):
 	pass
 
 
-@dataclass
-class Wave(Extension):
-	_klass = "wave"
-
+class Wave(BaseExtension):
 	chance: int = 0
 	level: int = 0
 	mini: bool = False
@@ -22,10 +19,7 @@ class Wave(Extension):
 		return f"{self.chance}% chance to create a level {self.level} {'mini' if self.mini else ''}wave"
 
 
-@dataclass
-class Surge(Extension):
-	_klass = "surge"
-
+class Surge(BaseExtension):
 	chance: int = 0
 	level: int = 0
 	range_start: int = 0
@@ -41,15 +35,11 @@ class Surge(Extension):
 							f"surge at {self.range_start // 4:.0f} range")
 
 
-@dataclass
-class DeathSurge(Surge):
-	_klass = "death_surge"
+class DeathSurge(BaseExtension):
+	pass
 
 
-@dataclass
-class Blast(Extension):
-	_klass = "blast"
-
+class Blast(BaseExtension):
 	chance: int = 0
 	range_start: int = 0
 	range_width: int = 0

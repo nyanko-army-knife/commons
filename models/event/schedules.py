@@ -1,4 +1,3 @@
-from dataclasses import dataclass
 from datetime import datetime
 from typing import TypeAlias, TypeVar
 
@@ -11,7 +10,7 @@ Span: TypeAlias = tuple[T, T]
 def datespan(span: Span[datetime]) -> str:
 	return f"[{span[0].strftime("%Y-%m-%d")}~{span[1].strftime("%Y-%m-%d")}]"
 
-@dataclass
+
 class GachaSchedule(Model):
 	_klass = "gacha_schedule"
 
@@ -48,7 +47,7 @@ class GachaSchedule(Model):
 		return modifiers
 
 
-@dataclass
+
 class ItemSchedule(Model):
 	_klass = "item_schedule"
 
@@ -63,7 +62,7 @@ class ItemSchedule(Model):
 
 
 
-@dataclass
+
 class PonosCron(Model):
 	_klass = "ponoscron"
 	yearly_schedules: list[Span[str]]
@@ -71,7 +70,7 @@ class PonosCron(Model):
 	weekly_schedules: int # bitmask
 	daily_schedules: list[Span[str]]
 
-@dataclass
+
 class SaleSchedule(Model):
 	_klass = "sale_schedule"
 

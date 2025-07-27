@@ -1,24 +1,24 @@
 # only used for talents
-from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
-from commons.models.trait import Trait, PseudoTrait
+from commons.models.trait import PseudoTrait, Trait
+
 from .base import Ability
+from .mult import Mult
 
 if TYPE_CHECKING:
 	from commons.models.unit import Form
 
 
-@dataclass
-class StatMod(Ability):
+class BaseStatMod(Ability):
 	def apply(self, cat: 'Form'):
 		pass
 
 
-@dataclass
-class StatModAbs(StatMod):
-	_klass = "stat_mod_abs"
+type StatMod = StatModAbs | StatModRel | AddTargets | AddPTargets | AddMults
 
+
+class StatModAbs(BaseStatMod):
 	stat_name: str
 	val: int
 
@@ -31,10 +31,7 @@ class StatModAbs(StatMod):
 		return f"{self.val:+} {self.stat_name}"
 
 
-@dataclass
-class StatModRel(StatMod):
-	_klass = "stat_mod_rel"
-
+class StatModRel(BaseStatMod):
 	stat_name: str
 	val: int
 
@@ -47,10 +44,7 @@ class StatModRel(StatMod):
 		return f"{self.val:+}% {self.stat_name}"
 
 
-@dataclass
-class AddTargets(StatMod):
-	_klass = "add_targets"
-
+class AddTargets(BaseStatMod):
 	traits: list[Trait]
 
 	def apply(self, cat: 'Form'):
@@ -60,10 +54,7 @@ class AddTargets(StatMod):
 		return f"adds target traits: {', '.join(self.traits)}"
 
 
-@dataclass
-class AddPTargets(StatMod):
-	_klass = "add_ptargets"
-
+class AddPTargets(BaseStatMod):
 	traits: list[PseudoTrait]
 
 	def apply(self, cat: 'Form'):
@@ -71,3 +62,13 @@ class AddPTargets(StatMod):
 
 	def __str__(self):
 		return f"adds target pseudotraits: {', '.join(self.traits)}"
+
+
+class AddMults(BaseStatMod):
+	mults: list[Mult]
+
+	def apply(self, cat: 'Form'):
+		cat.mults.extend(self.mults)
+
+	def __str__(self):
+		return f"adds effectiveness: {', '.join(self.mults)}"

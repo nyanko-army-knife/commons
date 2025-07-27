@@ -1,16 +1,15 @@
-from dataclasses import dataclass
+from typing import Union
 
-from commons.models.abilities.base import Ability
+from .base import Ability
+
+type ActiveAbility = Union[Slow, Freeze, Knockback, Weaken, Warp, Curse, Toxic, Dodge, TargetOnly]
 
 
-class ActiveAbility(Ability):
+class BaseActiveAbility(Ability):
 	pass
 
 
-@dataclass
-class Slow(ActiveAbility):
-	_klass = "slow"
-
+class Slow(BaseActiveAbility):
 	chance: int = 0
 	duration: int = 0
 
@@ -18,10 +17,7 @@ class Slow(ActiveAbility):
 		return f"{self.chance}% chance to slow for {self.duration}f"
 
 
-@dataclass
-class Freeze(ActiveAbility):
-	_klass = "freeze"
-
+class Freeze(BaseActiveAbility):
 	chance: int = 0
 	duration: int = 0
 
@@ -29,20 +25,14 @@ class Freeze(ActiveAbility):
 		return f"{self.chance}% chance to freeze for {self.duration}f"
 
 
-@dataclass
-class Knockback(ActiveAbility):
-	_klass = "knockback"
-
+class Knockback(BaseActiveAbility):
 	chance: int = 0
 
 	def __str__(self):
 		return f"{self.chance}% chance to knockback"
 
 
-@dataclass
-class Weaken(ActiveAbility):
-	_klass = "weaken"
-
+class Weaken(BaseActiveAbility):
 	chance: int = 0
 	duration: int = 0
 	amount: int = 0
@@ -51,10 +41,7 @@ class Weaken(ActiveAbility):
 		return f"{self.chance}% chance to weaken to {self.amount}% for {self.duration}f"
 
 
-@dataclass
-class Warp(ActiveAbility):
-	_klass = "warp"
-
+class Warp(BaseActiveAbility):
 	chance: int = 0
 	duration: int = 0
 	dist_min: int = 0
@@ -67,10 +54,7 @@ class Warp(ActiveAbility):
 			return f"{self.chance}% chance to warp for {self.duration}f over {self.dist_min}"
 
 
-@dataclass
-class Curse(ActiveAbility):
-	_klass = "curse"
-
+class Curse(BaseActiveAbility):
 	chance: int = 0
 	duration: int = 0
 
@@ -78,10 +62,7 @@ class Curse(ActiveAbility):
 		return f"{self.chance}% chance to curse for {self.duration}f"
 
 
-@dataclass
-class Toxic(ActiveAbility):
-	_klass = "toxic"
-
+class Toxic(BaseActiveAbility):
 	chance: int = 0
 	amount: int = 0
 
@@ -89,10 +70,7 @@ class Toxic(ActiveAbility):
 		return f"{self.chance}% chance to inflict {self.amount}% toxic damage"
 
 
-@dataclass
-class Dodge(ActiveAbility):
-	_klass = "dodge"
-
+class Dodge(BaseActiveAbility):
 	chance: int = 0
 	duration: int = 0
 
@@ -100,9 +78,6 @@ class Dodge(ActiveAbility):
 		return f"{self.chance}% chance to dodge for {self.duration}f"
 
 
-@dataclass
-class TargetOnly(ActiveAbility):
-	_klass = "target_only"
-
+class TargetOnly(BaseActiveAbility):
 	def __str__(self):
 		return "only attacks its target traits"

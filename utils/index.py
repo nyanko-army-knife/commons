@@ -51,7 +51,7 @@ class Index[T]:
 			return self.lookup_dict[name], rapidfuzz.fuzz.QRatio(target, name)
 
 	@lru_cache(maxsize=1 << 10)
-	def lookup_debug(self, target: str, force_quick: bool = False) -> (bool, list[Lookup]):
+	def lookup_debug(self, target: str, force_quick: bool = False) -> tuple[bool, list[Lookup]]:
 		target = target.lower()
 		# noinspection PyTypeChecker
 		lookups: list[Lookup] = [Lookup(*x) for x in

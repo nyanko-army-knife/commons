@@ -1,17 +1,14 @@
 from copy import deepcopy
-from dataclasses import dataclass
+from typing import Self
 
 from .entity import Entity
 
 
-@dataclass(kw_only=True)
 class Enemy(Entity):
-	_klass: str = "enemy"
-
 	id_: int = 0
 	drop: int = 0
 
-	def to_mag(self, hp: int, atk: int = 0) -> 'Enemy':
+	def to_mag(self, hp: int, atk: int = 0) -> Self:
 		atk = hp if atk == 0 else atk
 		toret = deepcopy(self)
 		toret.hp = int(self.hp * (hp / 100))
