@@ -1,5 +1,8 @@
+from typing import Any
+
+
 def csv_parse(reader, sep=',', strict=False) -> list[list[int]]:
-	rows = []
+	rows: list[list[Any]] = []
 	for row in reader.read().splitlines():
 		rows.append([])
 		cells = row.split(sep)

@@ -1,6 +1,8 @@
 from copy import deepcopy
 from typing import Optional, Self
 
+from msgspec import field
+
 from commons.models.base import Model
 
 
@@ -38,7 +40,7 @@ class Hit(Model):
 
 
 class AttackBreakup(Model):
-	hit_0: Hit
+	hit_0: Hit = field(default_factory=Hit)
 	hit_1: Optional[Hit] = None
 	hit_2: Optional[Hit] = None
 	backswing: int = -1
