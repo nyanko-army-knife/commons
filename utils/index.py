@@ -22,10 +22,12 @@ class Index[T]:
 	def __getitem__(self, item) -> T:
 		return self.items[item]
 
-	def __init__(self, items: list[T], namegetter: Callable[[T], str], aliases: dict[str, int]):
+	def __init__(self, items: list[T], namegetter: Callable[[T], str],
+							 aliasgetter: typing.Optional[Callable[[T], list[str]]]):
 		self.items = items
-		self.lookup_dict = ({namegetter(x).lower(): x for x in items if x is not None}
-												| {K.lower(): items[V] for K, V in aliases.items()})
+		self.lookup_dict = {namegetter(x).lower(): x for x in items if x is not None}
+		if aliasgetter:
+			self.lookup_dict |= {alias: x for x in items if x is not None for alias in aliasgetter(x)}
 		self.namegetter = namegetter
 
 	@lru_cache(maxsize=1 << 10)

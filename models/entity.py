@@ -8,6 +8,7 @@ from commons.models.trait import PseudoTrait, Trait
 
 class Entity(Model):
 	name: str = ""
+	aliases: list[str] = []
 	description: str = ""
 
 	hp: int = 0

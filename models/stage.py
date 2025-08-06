@@ -4,8 +4,6 @@ from commons.models.base import Model
 
 
 class Schematic(Model):
-	_klass = "schematic"
-
 	enemy_id: int = 0  # offset by +1?
 	mag_hp: int = 0
 	mag_atk: int = 0
@@ -43,7 +41,6 @@ class Schematic(Model):
 
 
 class Stage(Model):
-	_klass = "stage"
 	id_: tuple[str, int, int] = ("", -1, -1)
 	name: str = ''
 
@@ -72,7 +69,6 @@ class Stage(Model):
 
 
 class Map(Model):
-	_klass = "map_"
 	id_: tuple[str, int] = ("", -1)
 	name: str = ''
 
@@ -84,7 +80,6 @@ class Map(Model):
 
 
 class Category(Model):
-	_klass = "category"
 	id_: str = ""
 
 	maps: list[Map] = field(default_factory=list)

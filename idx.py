@@ -29,8 +29,9 @@ def load_cats():
 
 	with open('data/db/cats.json', mode='rb') as fl:
 		c: list[Optional[Cat]] = msgspec.json.decode(fl.read(), type=list[Optional[Cat]])
-	units = Index[Cat](c, lambda x: str(x.id_), {})
-	forms = Index[Form](list(itertools.chain(*(cat.forms() for cat in c if cat is not None))), attrgetter("name"), {})
+	units = Index[Cat](c, lambda x: str(x.id_), None)
+	forms = Index[Form](list(itertools.chain(*(cat.forms() for cat in c if cat is not None))), attrgetter("name"),
+											attrgetter("aliases"))
 
 
 def load_enemies():
@@ -38,7 +39,7 @@ def load_enemies():
 
 	with open('data/db/enemies.json') as fl:
 		e = msgspec.json.decode(fl.read(), type=list[Enemy])
-	enemies = Index[Enemy](e, attrgetter("name"), {})
+	enemies = Index[Enemy](e, attrgetter("name"), None)
 
 
 def load_stages():
@@ -46,8 +47,9 @@ def load_stages():
 
 	with open('data/db/stages.json') as fl:
 		s = msgspec.json.decode(fl.read(), type=list[Category])
-	stages = Index[Stage](list(itertools.chain(*(map_.stages for cat in s for map_ in cat.maps))), attrgetter("name"), {})
-	maps = Index[Map](list(itertools.chain(*(cat.maps for cat in s))), attrgetter("name"), {})
+	stages = Index[Stage](list(itertools.chain(*(map_.stages for cat in s for map_ in cat.maps))), attrgetter("name"),
+												None)
+	maps = Index[Map](list(itertools.chain(*(cat.maps for cat in s))), attrgetter("name"), None)
 	categories = {cat.id_: cat for cat in s}
 
 
@@ -56,7 +58,7 @@ def load_combos():
 
 	with open('data/db/combos.json') as fl:
 		c = msgspec.json.decode(fl.read(), type=list[Combo])
-	combos = Index[Combo]([combo for combo in c if combo.condition != ComboCondition.UNUSED], attrgetter("name"), {})
+	combos = Index[Combo]([combo for combo in c if combo.condition != ComboCondition.UNUSED], attrgetter("name"), None)
 
 
 def load_talents():
