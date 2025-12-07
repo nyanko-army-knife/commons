@@ -22,3 +22,4 @@ class PseudoTrait(StrEnum):
 	colossus = "colossus"
 	behemoth = "behemoth"
 	sage = "sage"
+	supervillain = "supervillain"
