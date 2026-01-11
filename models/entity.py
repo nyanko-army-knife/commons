@@ -7,18 +7,18 @@ from commons.models.trait import PseudoTrait, Trait
 
 
 class Entity(Model):
-	name: str = ""
-	aliases: list[str] = []
-	description: str = ""
+	name: str
+	aliases: list[str]
+	description: str
 
-	hp: int = 0
-	kb: int = 0
-	speed: int = 0
-	atk: int = 0
-	range_: int = 0
-	hbox_offset: int = 0
-	hbox_width: int = 0
-	area_attack: bool = False
+	hp: int
+	kb: int
+	speed: int
+	atk: int
+	range_: int
+	hbox_offset: int
+	hbox_width: int
+	area_attack: bool
 
 	traits: list[Trait] = field(default_factory=list)
 	ptraits: list[PseudoTrait] = field(default_factory=list)

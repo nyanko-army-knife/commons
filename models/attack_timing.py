@@ -14,12 +14,12 @@ def damage_scale(dmg: int, level_mult: float, treasure_mult: float) -> int:
 
 
 class Hit(Model):
-	use_ability: bool = False
-	separate_range: bool = False
-	damage: int = 0
-	range_start: int = 0
-	range_width: int = 0
-	foreswing: int = 0
+	use_ability: bool
+	separate_range: bool
+	damage: int
+	range_start: int
+	range_width: int
+	foreswing: int
 
 	# replaces foreswing with delay
 	def after(self, other: Self) -> Self:

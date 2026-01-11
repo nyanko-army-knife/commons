@@ -1,0 +1,2025 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "definitions": {
+    "Cat": {
+      "title": "Cat",
+      "type": "object",
+      "properties": {
+        "_klass": {
+          "enum": [
+            "cat"
+          ]
+        },
+        "id_": {
+          "type": "integer",
+          "default": 0
+        },
+        "level_curve": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          },
+          "default": []
+        },
+        "xp_curve": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          },
+          "default": []
+        },
+        "rarity": {
+          "$ref": "#/definitions/Rarity",
+          "default": 0
+        },
+        "tf_reqs": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 2,
+            "items": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "integer"
+              }
+            ]
+          },
+          "default": []
+        },
+        "tf_level": {
+          "type": "integer",
+          "default": 0
+        },
+        "tf_xp": {
+          "type": "integer",
+          "default": 0
+        },
+        "uf_reqs": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 2,
+            "items": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "integer"
+              }
+            ]
+          },
+          "default": []
+        },
+        "uf_level": {
+          "type": "integer",
+          "default": 0
+        },
+        "uf_xp": {
+          "type": "integer",
+          "default": 0
+        },
+        "max_level": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "default": [
+            -1,
+            -1,
+            -1
+          ]
+        },
+        "unlock_method": {
+          "$ref": "#/definitions/UnlockMethod",
+          "default": 1
+        },
+        "form_base": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/Form"
+            }
+          ],
+          "default": null
+        },
+        "form_evolved": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/Form"
+            }
+          ],
+          "default": null
+        },
+        "form_true": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/Form"
+            }
+          ],
+          "default": null
+        },
+        "form_ultra": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/Form"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "_klass"
+      ]
+    },
+    "Rarity": {
+      "title": "Rarity",
+      "enum": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    },
+    "UnlockMethod": {
+      "title": "UnlockMethod",
+      "enum": [
+        0,
+        1,
+        2
+      ]
+    },
+    "Form": {
+      "title": "Form",
+      "type": "object",
+      "properties": {
+        "_klass": {
+          "enum": [
+            "form"
+          ]
+        },
+        "name": {
+          "type": "string"
+        },
+        "aliases": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "description": {
+          "type": "string"
+        },
+        "hp": {
+          "type": "integer"
+        },
+        "kb": {
+          "type": "integer"
+        },
+        "speed": {
+          "type": "integer"
+        },
+        "atk": {
+          "type": "integer"
+        },
+        "range_": {
+          "type": "integer"
+        },
+        "hbox_offset": {
+          "type": "integer"
+        },
+        "hbox_width": {
+          "type": "integer"
+        },
+        "area_attack": {
+          "type": "boolean"
+        },
+        "traits": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Trait"
+          },
+          "default": []
+        },
+        "ptraits": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/PseudoTrait"
+          },
+          "default": []
+        },
+        "extensions": {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/Wave"
+              },
+              {
+                "$ref": "#/$defs/Surge"
+              },
+              {
+                "$ref": "#/$defs/DeathSurge"
+              },
+              {
+                "$ref": "#/$defs/Blast"
+              }
+            ],
+            "discriminator": {
+              "propertyName": "_klass",
+              "mapping": {
+                "wave": "#/$defs/Wave",
+                "surge": "#/$defs/Surge",
+                "death_surge": "#/$defs/DeathSurge",
+                "blast": "#/$defs/Blast"
+              }
+            }
+          },
+          "default": []
+        },
+        "abilities": {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/Slow"
+              },
+              {
+                "$ref": "#/$defs/Freeze"
+              },
+              {
+                "$ref": "#/$defs/Knockback"
+              },
+              {
+                "$ref": "#/$defs/Weaken"
+              },
+              {
+                "$ref": "#/$defs/Warp"
+              },
+              {
+                "$ref": "#/$defs/Curse"
+              },
+              {
+                "$ref": "#/$defs/Toxic"
+              },
+              {
+                "$ref": "#/$defs/Dodge"
+              },
+              {
+                "$ref": "#/$defs/TargetOnly"
+              }
+            ],
+            "discriminator": {
+              "propertyName": "_klass",
+              "mapping": {
+                "slow": "#/$defs/Slow",
+                "freeze": "#/$defs/Freeze",
+                "knockback": "#/$defs/Knockback",
+                "weaken": "#/$defs/Weaken",
+                "warp": "#/$defs/Warp",
+                "curse": "#/$defs/Curse",
+                "toxic": "#/$defs/Toxic",
+                "dodge": "#/$defs/Dodge",
+                "target_only": "#/$defs/TargetOnly"
+              }
+            }
+          },
+          "default": []
+        },
+        "passives": {
+          "$ref": "#/definitions/Passives"
+        },
+        "breakup": {
+          "$ref": "#/definitions/AttackBreakup"
+        },
+        "id_": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": [
+            {
+              "type": "integer"
+            },
+            {
+              "$ref": "#/definitions/FormID"
+            }
+          ],
+          "default": [
+            -1,
+            0
+          ]
+        },
+        "mults": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Mult"
+          },
+          "default": []
+        },
+        "cooldown": {
+          "type": "integer",
+          "default": 0
+        },
+        "cost": {
+          "type": "integer",
+          "default": 0
+        }
+      },
+      "required": [
+        "_klass",
+        "name",
+        "aliases",
+        "description",
+        "hp",
+        "kb",
+        "speed",
+        "atk",
+        "range_",
+        "hbox_offset",
+        "hbox_width",
+        "area_attack"
+      ]
+    },
+    "Trait": {
+      "title": "Trait",
+      "enum": [
+        "aku",
+        "alien",
+        "angel",
+        "black",
+        "floating",
+        "metal",
+        "red",
+        "relic",
+        "white",
+        "zombie"
+      ]
+    },
+    "PseudoTrait": {
+      "title": "PseudoTrait",
+      "enum": [
+        "base",
+        "behemoth",
+        "colossus",
+        "eva angel",
+        "sage",
+        "starred alien",
+        "supervillain",
+        "witch"
+      ]
+    },
+    "Wave": {
+      "title": "Wave",
+      "type": "object",
+      "properties": {
+        "_klass": {
+          "enum": [
+            "wave"
+          ]
+        },
+        "chance": {
+          "type": "integer",
+          "default": 0
+        },
+        "level": {
+          "type": "integer",
+          "default": 0
+        },
+        "mini": {
+          "type": "boolean",
+          "default": false
+        }
+      },
+      "required": [
+        "_klass"
+      ]
+    },
+    "Surge": {
+      "title": "Surge",
+      "type": "object",
+      "properties": {
+        "_klass": {
+          "enum": [
+            "surge"
+          ]
+        },
+        "chance": {
+          "type": "integer",
+          "default": 0
+        },
+        "level": {
+          "type": "integer",
+          "default": 0
+        },
+        "range_start": {
+          "type": "integer",
+          "default": 0
+        },
+        "range_width": {
+          "type": "integer",
+          "default": 0
+        },
+        "mini": {
+          "type": "boolean",
+          "default": false
+        }
+      },
+      "required": [
+        "_klass"
+      ]
+    },
+    "DeathSurge": {
+      "title": "DeathSurge",
+      "type": "object",
+      "properties": {
+        "_klass": {
+          "enum": [
+            "death_surge"
+          ]
+        }
+      },
+      "required": [
+        "_klass"
+      ]
+    },
+    "Blast": {
+      "title": "Blast",
+      "type": "object",
+      "properties": {
+        "_klass": {
+          "enum": [
+            "blast"
+          ]
+        },
+        "chance": {
+          "type": "integer",
+          "default": 0
+        },
+        "range_start": {
+          "type": "integer",
+          "default": 0
+        },
+        "range_width": {
+          "type": "integer",
+          "default": 0
+        }
+      },
+      "required": [
+        "_klass"
+      ]
+    },
+    "Slow": {
+      "title": "Slow",
+      "type": "object",
+      "properties": {
+        "_klass": {
+          "enum": [
+            "slow"
+          ]
+        },
+        "chance": {
+          "type": "integer",
+          "default": 0
+        },
+        "duration": {
+          "type": "integer",
+          "default": 0
+        }
+      },
+      "required": [
+        "_klass"
+      ]
+    },
+    "Freeze": {
+      "title": "Freeze",
+      "type": "object",
+      "properties": {
+        "_klass": {
+          "enum": [
+            "freeze"
+          ]
+        },
+        "chance": {
+          "type": "integer",
+          "default": 0
+        },
+        "duration": {
+          "type": "integer",
+          "default": 0
+        }
+      },
+      "required": [
+        "_klass"
+      ]
+    },
+    "Knockback": {
+      "title": "Knockback",
+      "type": "object",
+      "properties": {
+        "_klass": {
+          "enum": [
+            "knockback"
+          ]
+        },
+        "chance": {
+          "type": "integer",
+          "default": 0
+        }
+      },
+      "required": [
+        "_klass"
+      ]
+    },
+    "Weaken": {
+      "title": "Weaken",
+      "type": "object",
+      "properties": {
+        "_klass": {
+          "enum": [
+            "weaken"
+          ]
+        },
+        "chance": {
+          "type": "integer",
+          "default": 0
+        },
+        "duration": {
+          "type": "integer",
+          "default": 0
+        },
+        "amount": {
+          "type": "integer",
+          "default": 0
+        }
+      },
+      "required": [
+        "_klass"
+      ]
+    },
+    "Warp": {
+      "title": "Warp",
+      "type": "object",
+      "properties": {
+        "_klass": {
+          "enum": [
+            "warp"
+          ]
+        },
+        "chance": {
+          "type": "integer",
+          "default": 0
+        },
+        "duration": {
+          "type": "integer",
+          "default": 0
+        },
+        "dist_min": {
+          "type": "integer",
+          "default": 0
+        },
+        "dist_max": {
+          "type": "integer",
+          "default": 0
+        }
+      },
+      "required": [
+        "_klass"
+      ]
+    },
+    "Curse": {
+      "title": "Curse",
+      "type": "object",
+      "properties": {
+        "_klass": {
+          "enum": [
+            "curse"
+          ]
+        },
+        "chance": {
+          "type": "integer",
+          "default": 0
+        },
+        "duration": {
+          "type": "integer",
+          "default": 0
+        }
+      },
+      "required": [
+        "_klass"
+      ]
+    },
+    "Toxic": {
+      "title": "Toxic",
+      "type": "object",
+      "properties": {
+        "_klass": {
+          "enum": [
+            "toxic"
+          ]
+        },
+        "chance": {
+          "type": "integer",
+          "default": 0
+        },
+        "amount": {
+          "type": "integer",
+          "default": 0
+        }
+      },
+      "required": [
+        "_klass"
+      ]
+    },
+    "Dodge": {
+      "title": "Dodge",
+      "type": "object",
+      "properties": {
+        "_klass": {
+          "enum": [
+            "dodge"
+          ]
+        },
+        "chance": {
+          "type": "integer",
+          "default": 0
+        },
+        "duration": {
+          "type": "integer",
+          "default": 0
+        }
+      },
+      "required": [
+        "_klass"
+      ]
+    },
+    "TargetOnly": {
+      "title": "TargetOnly",
+      "type": "object",
+      "properties": {
+        "_klass": {
+          "enum": [
+            "target_only"
+          ]
+        }
+      },
+      "required": [
+        "_klass"
+      ]
+    },
+    "Passives": {
+      "title": "Passives",
+      "type": "object",
+      "properties": {
+        "_klass": {
+          "enum": [
+            "passives"
+          ]
+        },
+        "immunities": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Immunity"
+          },
+          "default": []
+        },
+        "resists": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Resist"
+          },
+          "default": []
+        },
+        "defensives": {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/CounterSurge"
+              },
+              {
+                "$ref": "#/$defs/WaveBlock"
+              },
+              {
+                "$ref": "#/$defs/Barrier"
+              },
+              {
+                "$ref": "#/$defs/Survive"
+              },
+              {
+                "$ref": "#/$defs/Shield"
+              },
+              {
+                "$ref": "#/$defs/Revive"
+              },
+              {
+                "$ref": "#/$defs/Strengthen"
+              },
+              {
+                "$ref": "#/$defs/BehemothDodge"
+              },
+              {
+                "$ref": "#/$defs/Metal"
+              }
+            ],
+            "discriminator": {
+              "propertyName": "_klass",
+              "mapping": {
+                "counter_surge": "#/$defs/CounterSurge",
+                "wave_block": "#/$defs/WaveBlock",
+                "barrier": "#/$defs/Barrier",
+                "survive": "#/$defs/Survive",
+                "shield": "#/$defs/Shield",
+                "revive": "#/$defs/Revive",
+                "strengthen": "#/$defs/Strengthen",
+                "behemoth_dodge": "#/$defs/BehemothDodge",
+                "metal": "#/$defs/Metal"
+              }
+            }
+          },
+          "default": []
+        },
+        "offensives": {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/Suicide"
+              },
+              {
+                "$ref": "#/$defs/ZombieKiller"
+              },
+              {
+                "$ref": "#/$defs/SoulStrike"
+              },
+              {
+                "$ref": "#/$defs/DoubleBounty"
+              },
+              {
+                "$ref": "#/$defs/BaseDestroyer"
+              },
+              {
+                "$ref": "#/$defs/BarrierBreak"
+              },
+              {
+                "$ref": "#/$defs/ShieldBreak"
+              },
+              {
+                "$ref": "#/$defs/Critical"
+              },
+              {
+                "$ref": "#/$defs/SavageBlow"
+              },
+              {
+                "$ref": "#/$defs/Burrow"
+              },
+              {
+                "$ref": "#/$defs/Conjure"
+              },
+              {
+                "$ref": "#/$defs/MetalKiller"
+              }
+            ],
+            "discriminator": {
+              "propertyName": "_klass",
+              "mapping": {
+                "suicide": "#/$defs/Suicide",
+                "zombie_killer": "#/$defs/ZombieKiller",
+                "soul_strike": "#/$defs/SoulStrike",
+                "double_bounty": "#/$defs/DoubleBounty",
+                "base_destroyer": "#/$defs/BaseDestroyer",
+                "barrier_break": "#/$defs/BarrierBreak",
+                "shield_break": "#/$defs/ShieldBreak",
+                "critical": "#/$defs/Critical",
+                "savage_blow": "#/$defs/SavageBlow",
+                "burrow": "#/$defs/Burrow",
+                "conjure": "#/$defs/Conjure",
+                "metal_killer": "#/$defs/MetalKiller"
+              }
+            }
+          },
+          "default": []
+        }
+      },
+      "required": [
+        "_klass"
+      ]
+    },
+    "Immunity": {
+      "title": "Immunity",
+      "type": "object",
+      "properties": {
+        "_klass": {
+          "enum": [
+            "immunity"
+          ]
+        },
+        "to": {
+          "$ref": "#/definitions/Proc"
+        }
+      },
+      "required": [
+        "_klass",
+        "to"
+      ]
+    },
+    "Proc": {
+      "title": "Proc",
+      "enum": [
+        "blast",
+        "boss_wave",
+        "curse",
+        "freeze",
+        "knockback",
+        "slow",
+        "surge",
+        "toxic",
+        "warp",
+        "wave",
+        "weaken"
+      ]
+    },
+    "Resist": {
+      "title": "Resist",
+      "type": "object",
+      "properties": {
+        "_klass": {
+          "enum": [
+            "resist"
+          ]
+        },
+        "to": {
+          "$ref": "#/definitions/Proc"
+        },
+        "amt": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "_klass",
+        "to",
+        "amt"
+      ]
+    },
+    "CounterSurge": {
+      "title": "CounterSurge",
+      "type": "object",
+      "properties": {
+        "_klass": {
+          "enum": [
+            "counter_surge"
+          ]
+        }
+      },
+      "required": [
+        "_klass"
+      ]
+    },
+    "WaveBlock": {
+      "title": "WaveBlock",
+      "type": "object",
+      "properties": {
+        "_klass": {
+          "enum": [
+            "wave_block"
+          ]
+        }
+      },
+      "required": [
+        "_klass"
+      ]
+    },
+    "Barrier": {
+      "title": "Barrier",
+      "type": "object",
+      "properties": {
+        "_klass": {
+          "enum": [
+            "barrier"
+          ]
+        },
+        "health": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "_klass",
+        "health"
+      ]
+    },
+    "Survive": {
+      "title": "Survive",
+      "type": "object",
+      "properties": {
+        "_klass": {
+          "enum": [
+            "survive"
+          ]
+        },
+        "chance": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "_klass",
+        "chance"
+      ]
+    },
+    "Shield": {
+      "title": "Shield",
+      "type": "object",
+      "properties": {
+        "_klass": {
+          "enum": [
+            "shield"
+          ]
+        },
+        "health": {
+          "type": "integer"
+        },
+        "regen": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "_klass",
+        "health",
+        "regen"
+      ]
+    },
+    "Revive": {
+      "title": "Revive",
+      "type": "object",
+      "properties": {
+        "_klass": {
+          "enum": [
+            "revive"
+          ]
+        },
+        "count": {
+          "type": "integer"
+        },
+        "delay": {
+          "type": "integer"
+        },
+        "health": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "_klass",
+        "count",
+        "delay",
+        "health"
+      ]
+    },
+    "Strengthen": {
+      "title": "Strengthen",
+      "type": "object",
+      "properties": {
+        "_klass": {
+          "enum": [
+            "strengthen"
+          ]
+        },
+        "health": {
+          "type": "integer"
+        },
+        "mult": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "_klass",
+        "health",
+        "mult"
+      ]
+    },
+    "BehemothDodge": {
+      "title": "BehemothDodge",
+      "type": "object",
+      "properties": {
+        "_klass": {
+          "enum": [
+            "behemoth_dodge"
+          ]
+        },
+        "chance": {
+          "type": "integer"
+        },
+        "duration": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "_klass",
+        "chance",
+        "duration"
+      ]
+    },
+    "Metal": {
+      "title": "Metal",
+      "type": "object",
+      "properties": {
+        "_klass": {
+          "enum": [
+            "metal"
+          ]
+        }
+      },
+      "required": [
+        "_klass"
+      ]
+    },
+    "Suicide": {
+      "title": "Suicide",
+      "type": "object",
+      "properties": {
+        "_klass": {
+          "enum": [
+            "suicide"
+          ]
+        }
+      },
+      "required": [
+        "_klass"
+      ]
+    },
+    "ZombieKiller": {
+      "title": "ZombieKiller",
+      "type": "object",
+      "properties": {
+        "_klass": {
+          "enum": [
+            "zombie_killer"
+          ]
+        }
+      },
+      "required": [
+        "_klass"
+      ]
+    },
+    "SoulStrike": {
+      "title": "SoulStrike",
+      "type": "object",
+      "properties": {
+        "_klass": {
+          "enum": [
+            "soul_strike"
+          ]
+        }
+      },
+      "required": [
+        "_klass"
+      ]
+    },
+    "DoubleBounty": {
+      "title": "DoubleBounty",
+      "type": "object",
+      "properties": {
+        "_klass": {
+          "enum": [
+            "double_bounty"
+          ]
+        }
+      },
+      "required": [
+        "_klass"
+      ]
+    },
+    "BaseDestroyer": {
+      "title": "BaseDestroyer",
+      "type": "object",
+      "properties": {
+        "_klass": {
+          "enum": [
+            "base_destroyer"
+          ]
+        }
+      },
+      "required": [
+        "_klass"
+      ]
+    },
+    "BarrierBreak": {
+      "title": "BarrierBreak",
+      "type": "object",
+      "properties": {
+        "_klass": {
+          "enum": [
+            "barrier_break"
+          ]
+        },
+        "chance": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "_klass",
+        "chance"
+      ]
+    },
+    "ShieldBreak": {
+      "title": "ShieldBreak",
+      "type": "object",
+      "properties": {
+        "_klass": {
+          "enum": [
+            "shield_break"
+          ]
+        },
+        "chance": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "_klass",
+        "chance"
+      ]
+    },
+    "Critical": {
+      "title": "Critical",
+      "type": "object",
+      "properties": {
+        "_klass": {
+          "enum": [
+            "critical"
+          ]
+        },
+        "chance": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "_klass",
+        "chance"
+      ]
+    },
+    "SavageBlow": {
+      "title": "SavageBlow",
+      "type": "object",
+      "properties": {
+        "_klass": {
+          "enum": [
+            "savage_blow"
+          ]
+        },
+        "chance": {
+          "type": "integer"
+        },
+        "amount": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "_klass",
+        "chance",
+        "amount"
+      ]
+    },
+    "Burrow": {
+      "title": "Burrow",
+      "type": "object",
+      "properties": {
+        "_klass": {
+          "enum": [
+            "burrow"
+          ]
+        },
+        "count": {
+          "type": "integer"
+        },
+        "distance": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "_klass",
+        "count",
+        "distance"
+      ]
+    },
+    "Conjure": {
+      "title": "Conjure",
+      "type": "object",
+      "properties": {
+        "_klass": {
+          "enum": [
+            "conjure"
+          ]
+        },
+        "spirit_id": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "_klass",
+        "spirit_id"
+      ]
+    },
+    "MetalKiller": {
+      "title": "MetalKiller",
+      "type": "object",
+      "properties": {
+        "_klass": {
+          "enum": [
+            "metal_killer"
+          ]
+        },
+        "percent": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "_klass",
+        "percent"
+      ]
+    },
+    "AttackBreakup": {
+      "title": "AttackBreakup",
+      "type": "object",
+      "properties": {
+        "_klass": {
+          "enum": [
+            "attack_breakup"
+          ]
+        },
+        "hit_0": {
+          "$ref": "#/definitions/Hit"
+        },
+        "hit_1": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/Hit"
+            }
+          ],
+          "default": null
+        },
+        "hit_2": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/Hit"
+            }
+          ],
+          "default": null
+        },
+        "backswing": {
+          "type": "integer",
+          "default": -1
+        },
+        "cooldown": {
+          "type": "integer",
+          "default": -1
+        }
+      },
+      "required": [
+        "_klass"
+      ]
+    },
+    "Hit": {
+      "title": "Hit",
+      "type": "object",
+      "properties": {
+        "_klass": {
+          "enum": [
+            "hit"
+          ]
+        },
+        "use_ability": {
+          "type": "boolean"
+        },
+        "separate_range": {
+          "type": "boolean"
+        },
+        "damage": {
+          "type": "integer"
+        },
+        "range_start": {
+          "type": "integer"
+        },
+        "range_width": {
+          "type": "integer"
+        },
+        "foreswing": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "_klass",
+        "use_ability",
+        "separate_range",
+        "damage",
+        "range_start",
+        "range_width",
+        "foreswing"
+      ]
+    },
+    "FormID": {
+      "title": "FormID",
+      "enum": [
+        0,
+        1,
+        2,
+        3
+      ]
+    },
+    "Mult": {
+      "title": "Mult",
+      "enum": [
+        "insane_dmg",
+        "insane_resist",
+        "massive_dmg",
+        "resist",
+        "strong"
+      ]
+    },
+    "Enemy": {
+      "title": "Enemy",
+      "type": "object",
+      "properties": {
+        "_klass": {
+          "enum": [
+            "enemy"
+          ]
+        },
+        "name": {
+          "type": "string"
+        },
+        "aliases": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "description": {
+          "type": "string"
+        },
+        "hp": {
+          "type": "integer"
+        },
+        "kb": {
+          "type": "integer"
+        },
+        "speed": {
+          "type": "integer"
+        },
+        "atk": {
+          "type": "integer"
+        },
+        "range_": {
+          "type": "integer"
+        },
+        "hbox_offset": {
+          "type": "integer"
+        },
+        "hbox_width": {
+          "type": "integer"
+        },
+        "area_attack": {
+          "type": "boolean"
+        },
+        "traits": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Trait"
+          },
+          "default": []
+        },
+        "ptraits": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/PseudoTrait"
+          },
+          "default": []
+        },
+        "extensions": {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/Wave"
+              },
+              {
+                "$ref": "#/$defs/Surge"
+              },
+              {
+                "$ref": "#/$defs/DeathSurge"
+              },
+              {
+                "$ref": "#/$defs/Blast"
+              }
+            ],
+            "discriminator": {
+              "propertyName": "_klass",
+              "mapping": {
+                "wave": "#/$defs/Wave",
+                "surge": "#/$defs/Surge",
+                "death_surge": "#/$defs/DeathSurge",
+                "blast": "#/$defs/Blast"
+              }
+            }
+          },
+          "default": []
+        },
+        "abilities": {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/Slow"
+              },
+              {
+                "$ref": "#/$defs/Freeze"
+              },
+              {
+                "$ref": "#/$defs/Knockback"
+              },
+              {
+                "$ref": "#/$defs/Weaken"
+              },
+              {
+                "$ref": "#/$defs/Warp"
+              },
+              {
+                "$ref": "#/$defs/Curse"
+              },
+              {
+                "$ref": "#/$defs/Toxic"
+              },
+              {
+                "$ref": "#/$defs/Dodge"
+              },
+              {
+                "$ref": "#/$defs/TargetOnly"
+              }
+            ],
+            "discriminator": {
+              "propertyName": "_klass",
+              "mapping": {
+                "slow": "#/$defs/Slow",
+                "freeze": "#/$defs/Freeze",
+                "knockback": "#/$defs/Knockback",
+                "weaken": "#/$defs/Weaken",
+                "warp": "#/$defs/Warp",
+                "curse": "#/$defs/Curse",
+                "toxic": "#/$defs/Toxic",
+                "dodge": "#/$defs/Dodge",
+                "target_only": "#/$defs/TargetOnly"
+              }
+            }
+          },
+          "default": []
+        },
+        "passives": {
+          "$ref": "#/definitions/Passives"
+        },
+        "breakup": {
+          "$ref": "#/definitions/AttackBreakup"
+        },
+        "id_": {
+          "type": "integer",
+          "default": 0
+        },
+        "drop": {
+          "type": "integer",
+          "default": 0
+        }
+      },
+      "required": [
+        "_klass",
+        "name",
+        "aliases",
+        "description",
+        "hp",
+        "kb",
+        "speed",
+        "atk",
+        "range_",
+        "hbox_offset",
+        "hbox_width",
+        "area_attack"
+      ]
+    },
+    "Stage": {
+      "title": "Stage",
+      "type": "object",
+      "properties": {
+        "_klass": {
+          "enum": [
+            "stage"
+          ]
+        },
+        "id_": {
+          "type": "array",
+          "minItems": 3,
+          "maxItems": 3,
+          "items": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "default": [
+            "",
+            -1,
+            -1
+          ]
+        },
+        "name": {
+          "type": "string",
+          "default": ""
+        },
+        "castle_id": {
+          "type": "integer",
+          "default": 0
+        },
+        "no_continues": {
+          "type": "boolean",
+          "default": false
+        },
+        "ex_chance": {
+          "type": "integer",
+          "default": 0
+        },
+        "ex_map": {
+          "type": "integer",
+          "default": 0
+        },
+        "ex_stage_min": {
+          "type": "integer",
+          "default": 0
+        },
+        "ex_stage_max": {
+          "type": "integer",
+          "default": 0
+        },
+        "length": {
+          "type": "integer",
+          "default": 0
+        },
+        "base_health": {
+          "type": "integer",
+          "default": 0
+        },
+        "enemy_limit": {
+          "type": "integer",
+          "default": 0
+        },
+        "enemy_base_id": {
+          "type": "integer",
+          "default": 0
+        },
+        "global_respawn_min": {
+          "type": "integer",
+          "default": 0
+        },
+        "global_respawn_max": {
+          "type": "integer",
+          "default": 0
+        },
+        "background_id": {
+          "type": "integer",
+          "default": 0
+        },
+        "time_limit": {
+          "type": "integer",
+          "default": 0
+        },
+        "boss_shield": {
+          "type": "boolean",
+          "default": false
+        },
+        "schematics": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Schematic"
+          },
+          "default": []
+        }
+      },
+      "required": [
+        "_klass"
+      ]
+    },
+    "Schematic": {
+      "title": "Schematic",
+      "type": "object",
+      "properties": {
+        "_klass": {
+          "enum": [
+            "schematic"
+          ]
+        },
+        "enemy_id": {
+          "type": "integer",
+          "default": 0
+        },
+        "mag_hp": {
+          "type": "integer",
+          "default": 0
+        },
+        "mag_atk": {
+          "type": "integer",
+          "default": 0
+        },
+        "score": {
+          "type": "integer",
+          "default": 0
+        },
+        "is_boss": {
+          "type": "boolean",
+          "default": false
+        },
+        "quantity": {
+          "type": "integer",
+          "default": 0
+        },
+        "is_start_after_hp": {
+          "type": "boolean",
+          "default": false
+        },
+        "start": {
+          "type": "integer",
+          "default": 0
+        },
+        "spawn_hp": {
+          "type": "integer",
+          "default": 0
+        },
+        "respawn_min": {
+          "type": "integer",
+          "default": 0
+        },
+        "respawn_max": {
+          "type": "integer",
+          "default": 0
+        },
+        "kill_count": {
+          "type": "integer",
+          "default": 0
+        },
+        "layer_min": {
+          "type": "integer",
+          "default": 0
+        },
+        "layer_max": {
+          "type": "integer",
+          "default": 0
+        }
+      },
+      "required": [
+        "_klass"
+      ]
+    },
+    "Gacha": {
+      "title": "Gacha",
+      "type": "object",
+      "properties": {
+        "_klass": {
+          "enum": [
+            "gacha"
+          ]
+        },
+        "id_": {
+          "type": "integer"
+        },
+        "category": {
+          "type": "string"
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "ticket_item_id": {
+          "type": "integer"
+        },
+        "series_id": {
+          "type": "integer"
+        },
+        "chara_id": {
+          "type": "integer"
+        },
+        "units": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer"
+          }
+        },
+        "blue_orbs": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer"
+          }
+        },
+        "items": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer"
+          }
+        }
+      },
+      "required": [
+        "_klass",
+        "id_",
+        "category",
+        "enabled",
+        "ticket_item_id",
+        "series_id",
+        "chara_id",
+        "units",
+        "blue_orbs",
+        "items"
+      ]
+    },
+    "GachaSchedule": {
+      "title": "GachaSchedule",
+      "type": "object",
+      "properties": {
+        "_klass": {
+          "enum": [
+            "gacha_schedule"
+          ]
+        },
+        "time_span": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "ver_span": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": [
+            {
+              "type": "array",
+              "minItems": 3,
+              "maxItems": 3,
+              "items": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            {
+              "type": "array",
+              "minItems": 3,
+              "maxItems": 3,
+              "items": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            }
+          ]
+        },
+        "category": {
+          "type": "integer"
+        },
+        "banner_id": {
+          "type": "integer"
+        },
+        "slot": {
+          "type": "integer"
+        },
+        "roll_cost": {
+          "type": "integer"
+        },
+        "roll_rates": {
+          "type": "array",
+          "minItems": 5,
+          "maxItems": 5,
+          "items": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "integer"
+            }
+          ]
+        },
+        "roll_guarantees": {
+          "type": "array",
+          "minItems": 5,
+          "maxItems": 5,
+          "items": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "boolean"
+            }
+          ]
+        },
+        "modifier": {
+          "type": "integer"
+        },
+        "item_drop": {
+          "type": "integer"
+        },
+        "message": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "_klass",
+        "time_span",
+        "ver_span",
+        "category",
+        "banner_id",
+        "slot",
+        "roll_cost",
+        "roll_rates",
+        "roll_guarantees",
+        "modifier",
+        "item_drop",
+        "message"
+      ]
+    },
+    "Combo": {
+      "title": "Combo",
+      "type": "object",
+      "properties": {
+        "_klass": {
+          "enum": [
+            "combo"
+          ]
+        },
+        "id_": {
+          "type": "integer"
+        },
+        "cats": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 2,
+            "items": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "integer"
+              }
+            ]
+          }
+        },
+        "name": {
+          "type": "string"
+        },
+        "size": {
+          "$ref": "#/definitions/ComboSize"
+        },
+        "effect": {
+          "$ref": "#/definitions/ComboEffect"
+        },
+        "condition": {
+          "$ref": "#/definitions/ComboCondition"
+        }
+      },
+      "required": [
+        "_klass",
+        "id_",
+        "cats",
+        "name",
+        "size",
+        "effect",
+        "condition"
+      ]
+    },
+    "ComboSize": {
+      "title": "ComboSize",
+      "type": "object",
+      "properties": {
+        "_klass": {
+          "enum": [
+            "combo_size"
+          ]
+        },
+        "id_": {
+          "type": "integer",
+          "default": 0
+        },
+        "name": {
+          "type": "string",
+          "default": ""
+        }
+      },
+      "required": [
+        "_klass"
+      ]
+    },
+    "ComboEffect": {
+      "title": "ComboEffect",
+      "type": "object",
+      "properties": {
+        "_klass": {
+          "enum": [
+            "combo_effect"
+          ]
+        },
+        "id_": {
+          "type": "integer",
+          "default": 0
+        },
+        "name": {
+          "type": "string",
+          "default": ""
+        }
+      },
+      "required": [
+        "_klass"
+      ]
+    },
+    "ComboCondition": {
+      "title": "ComboCondition",
+      "enum": [
+        -1,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10001,
+        10002,
+        10003
+      ]
+    }
+  }
+}
