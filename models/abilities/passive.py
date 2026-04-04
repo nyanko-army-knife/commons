@@ -1,10 +1,11 @@
 from enum import StrEnum
+from string.templatelib import Template
 from typing import Union
 
 from msgspec import field
 
 from ..abilities.base import Ability
-from ..base import Model
+from ..base import Model, Duration
 
 
 class Proc(StrEnum):
@@ -94,10 +95,10 @@ class Strengthen(BaseDefensive):
 
 class BehemothDodge(BaseDefensive):
 	chance: int
-	duration: int
+	duration: Duration
 
-	def __str__(self):
-		return f"{self.chance}% chance to dodge behemoth attacks for {self.duration}f"
+	def text(self) -> Template:
+		return t"{self.chance}% chance to dodge behemoth attacks for {self.duration}"
 
 
 class Metal(BaseDefensive):

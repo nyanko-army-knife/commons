@@ -10,6 +10,7 @@ from commons.models.enemy import Enemy
 from commons.models.item import Item
 from commons.models.stage import Category, Map, Stage
 from commons.models.talents import Talent
+from commons.utils import msg
 from commons.utils.index import Index
 
 enemies: Index[Enemy]
@@ -28,7 +29,7 @@ def load_cats():
 	global units, forms
 
 	with open('data/db/cats.json', mode='rb') as fl:
-		c: list[Optional[Cat]] = msgspec.json.decode(fl.read(), type=list[Optional[Cat]])
+		c: list[Optional[Cat]] = msg.dec(list[Optional[Cat]]).decode(fl.read())
 	units = Index[Cat](c, lambda x: str(x.id_), None)
 	forms = Index[Form](list(itertools.chain(*(cat.forms() for cat in c if cat is not None))), attrgetter("name"),
 											attrgetter("aliases"))
@@ -38,7 +39,7 @@ def load_enemies():
 	global enemies
 
 	with open('data/db/enemies.json') as fl:
-		e = msgspec.json.decode(fl.read(), type=list[Enemy])
+		e = msg.dec(list[Enemy]).decode(fl.read())
 	enemies = Index[Enemy](e, attrgetter("name"), None)
 
 
@@ -65,7 +66,7 @@ def load_talents():
 	global talents
 
 	with open('data/db/talents.json') as fl:
-		talents = msgspec.json.decode(fl.read(), type=dict[int, list[Talent]])
+		talents = msg.dec(dict[int, list[Talent]]).decode(fl.read())
 
 
 def load_items():
@@ -79,7 +80,7 @@ def load_gacha():
 	global gacha
 
 	with open('data/db/gachas.json') as fl:
-		gacha = {f"{item.category}{item.id_:03}": item for item in
+		gacha = {f"{item.category}{item.id_:04}": item for item in
 						 msgspec.json.decode(fl.read(), type=list[Gacha])}
 
 

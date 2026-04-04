@@ -1,4 +1,5 @@
 from datetime import datetime
+from string import Template
 from typing import TypeAlias, TypeVar
 
 from commons.models import Model
@@ -7,8 +8,9 @@ T = TypeVar('T')
 Version: TypeAlias = tuple[int, int, int]
 Span: TypeAlias = tuple[T, T]
 
-def datespan(span: Span[datetime]) -> str:
-	return f"[{span[0].strftime("%Y-%m-%d")}~{span[1].strftime("%Y-%m-%d")}]"
+
+def datespan(span: Span[datetime]) -> Template:
+	return t"{span[0]} ~ {span[1]}"
 
 
 class GachaSchedule(Model):
@@ -28,11 +30,11 @@ class GachaSchedule(Model):
 
 	@property
 	def gacha_id(self) -> str:
-		return f"{'NREE'[self.category]}{self.banner_id:03}"
+		return f"{'NREEX'[self.category]}{self.banner_id:04}"
 
 	@property
-	def modifiers(self) -> list[str]:
-		if not self.gacha_id.startswith("R"): return []
+	def modifiers(self) -> set[str]:
+		if not self.gacha_id.startswith("R"): return set()
 		modifiers = []
 		if self.modifier & 0b0100:
 			modifiers.append("S")  # step up
@@ -44,8 +46,7 @@ class GachaSchedule(Model):
 			modifiers.append("U")  # double uber rate
 		if self.roll_guarantees[-2]:
 			modifiers.append("G")  # guaranteed uber
-		return modifiers
-
+		return set(modifiers)
 
 
 class ItemSchedule(Model):
@@ -61,13 +62,11 @@ class ItemSchedule(Model):
 	message: str
 
 
-
-
 class PonosCron(Model):
 	_klass = "ponoscron"
 	yearly_schedules: list[Span[str]]
 	monthly_schedules: list[int]
-	weekly_schedules: int # bitmask
+	weekly_schedules: int  # bitmask
 	daily_schedules: list[Span[str]]
 
 

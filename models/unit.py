@@ -5,7 +5,7 @@ from typing import Optional, Self
 
 from msgspec import field
 
-from commons.models import Model
+from commons.models import Model, Duration
 from commons.models.abilities.mult import Mult
 from commons.models.entity import Entity
 
@@ -48,7 +48,7 @@ class Form(Entity):
 	id_: tuple[int, FormID] = (-1, FormID.BASE)
 
 	mults: list[Mult] = field(default_factory=list)
-	cooldown: int = 0
+	cooldown: Duration = 0
 	cost: int = 0
 
 	def to_level(self, level: int, curve: list[int]) -> 'Form':
@@ -58,7 +58,7 @@ class Form(Entity):
 		toret.atk = int(sum(hit.damage for hit in toret.breakup.hits()))
 		toret.hp = int(round(toret.hp * mult) * 2.5)
 		toret.cost = int(toret.cost * 1.5)
-		toret.cooldown = max(toret.cooldown * 2 - 264, 48)  # (research_level - 1) * 6 + treasures * 30
+		toret.cooldown = Duration(max(toret.cooldown * 2 - 264, 48))  # (research_level - 1) * 6 + treasures * 30
 		return toret
 
 	@property

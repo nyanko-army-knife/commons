@@ -1,22 +1,26 @@
-
 from commons.models import Model
 
-SERIES = ["Tales of the Nekoluga", "The Dynamites", "Sengoku Wargods Vajiras", "Galaxy Gals", "Dragon Emperors", "Red Busters",
-	 "Ultra Souls", "Dark Heroes", "Halloween Gacha", "Xmas Gals", "Goodbye <year>!", "Yurudrasil Collab",
-	 "Metal Slug Defense Collab", "Merc Storia Collab", "Survive! Mola Mola! Collab", "Annihilation City Collab",
-	 "Welcome <year>!", "Princess Punt/Merc Storia/Million Arthur/Dragon Poker", "Almighties", "UBERFEST",
-	 "Gals of Summer", "Platinum Ticket Banner", "Air Busters", "Puella Magi Madoka Magica Collab", "Iron Legion",
-	 "CRASH FEVER Collab", "Easter Carnival", "EPICFEST", "Girls & Monsters", "Gudetama Collab", "Ultra Selection",
-	 "Miracle Chance", "Metal Busters", "Elemental Pixies", "Fate/stay Night Collab", "Best of the Best",
-	 "PowerPro Baseball Collab", "Evangelion Set 1", "Bikkuriman Collab", "NEO Best of the Best", "Street Fighter Collab",
-	 "Excellent Selection", "SUPERFEST", "Hatsune Miku Collab", "Evangelion Set 2", "Wave Busters",
-	 "Legend Ticket Banner", "DynastyFest", "Valentine's Gals", "Ranma 1/2 Collab", "RoyalFest",
-	 "River City Clash Capsules", "White Day", "June Bride", "Street Fighter Collab Blue Team",
-	 "Street Fighter Collab Red Team", "Colossus Busters", "River City Clash Capsules Red Team",
-	 "River City Clash Capsules White Team", "BUSTERFEST", "Metal Slug Attack Collab", "90 Million DL Special Capsules",
-	 "Tower of Saviors Collab Capsules", "Rurouni Kenshin Collab", "Gals of Summer Sunshine", "Gals of Summer Blue Ocean",
-	 "Ultra 4 Selection", "Miracle 4 Selection", "Excellent 4 Selection", "100M DL Celebration",
-	 "Best of the Best (Milestone Edition)", "Seasonal GGals Step-Up Banner", "Baki Collab"]
+SERIES = ["Tales of the Nekoluga", "The Dynamites", "Sengoku Wargods Vajiras", "Galaxy Gals", "Dragon Emperors",
+					"Red Busters",
+					"Ultra Souls", "Dark Heroes", "Halloween Gacha", "Xmas Gals", "Goodbye <year>!", "Yurudrasil Collab",
+					"Metal Slug Defense Collab", "Merc Storia Collab", "Survive! Mola Mola! Collab", "Annihilation City Collab",
+					"Welcome <year>!", "Princess Punt/Merc Storia/Million Arthur/Dragon Poker", "Almighties", "UBERFEST",
+					"Gals of Summer", "Platinum Ticket Banner", "Air Busters", "Puella Magi Madoka Magica Collab", "Iron Legion",
+					"CRASH FEVER Collab", "Easter Carnival", "EPICFEST", "Girls & Monsters", "Gudetama Collab", "Ultra Selection",
+					"Miracle Chance", "Metal Busters", "Elemental Pixies", "Fate/stay Night Collab", "Best of the Best",
+					"PowerPro Baseball Collab", "Evangelion Set 1", "Bikkuriman Collab", "NEO Best of the Best",
+					"Street Fighter Collab",
+					"Excellent Selection", "SUPERFEST", "Hatsune Miku Collab", "Evangelion Set 2", "Wave Busters",
+					"Legend Ticket Banner", "DynastyFest", "Valentine's Gals", "Ranma 1/2 Collab", "RoyalFest",
+					"River City Clash Capsules", "White Day", "June Bride", "Street Fighter Collab Blue Team",
+					"Street Fighter Collab Red Team", "Colossus Busters", "River City Clash Capsules Red Team",
+					"River City Clash Capsules White Team", "BUSTERFEST", "Metal Slug Attack Collab",
+					"90 Million DL Special Capsules",
+					"Tower of Saviors Collab Capsules", "Rurouni Kenshin Collab", "Gals of Summer Sunshine",
+					"Gals of Summer Blue Ocean",
+					"Ultra 4 Selection", "Miracle 4 Selection", "Excellent 4 Selection", "100M DL Celebration",
+					"Best of the Best (Milestone Edition)", "Seasonal GGals Step-Up Banner", "Baki Collab", "Demon Slayer Collab",
+					"fuckwhat"]
 
 # IDs offset -1
 REINFORCEMENTS = {
@@ -27,7 +31,7 @@ REINFORCEMENTS = {
 
 
 class Gacha(Model):
-	_klass="Gacha"
+	_klass = "Gacha"
 
 	id_: int
 	category: str
@@ -63,4 +67,3 @@ class Gacha(Model):
 			if captain in self.units:
 				toret.append(extra)
 		return toret
-				

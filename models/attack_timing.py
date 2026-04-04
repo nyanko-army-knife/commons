@@ -1,9 +1,10 @@
 from copy import deepcopy
+from string.templatelib import Template
 from typing import Optional, Self
 
 from msgspec import field
 
-from commons.models.base import Model
+from commons.models.base import Model, Duration
 
 
 def damage_scale(dmg: int, level_mult: float, treasure_mult: float) -> int:
@@ -19,7 +20,7 @@ class Hit(Model):
 	damage: int
 	range_start: int
 	range_width: int
-	foreswing: int
+	foreswing: Duration
 
 	# replaces foreswing with delay
 	def after(self, other: Self) -> Self:
@@ -27,15 +28,15 @@ class Hit(Model):
 		toret.foreswing -= other.foreswing
 		return toret
 
-	def __str__(self):
-		out = f'{self.foreswing}f: '
+	def text(self) -> Template:
+		out = t'{self.foreswing}: '
 		if self.use_ability:
-			out += f"**__{self.damage}__**"
+			out += t"**__{self.damage}__**"
 		else:
-			out += f"{self.damage}"
+			out += t"{self.damage}"
 
 		if self.separate_range:
-			out += f' [{self.range_start}~{self.range_start + self.range_width}]'
+			out += t' [{self.range_start}~{self.range_start + self.range_width}]'
 		return out
 
 
@@ -43,16 +44,16 @@ class AttackBreakup(Model):
 	hit_0: Hit = field(default_factory=Hit)
 	hit_1: Optional[Hit] = None
 	hit_2: Optional[Hit] = None
-	backswing: int = -1
-	cooldown: int = -1
+	backswing: Duration = -1
+	cooldown: Duration = -1
 
-	def __str__(self):
-		out = ""
-		out += f" ↑{self.hit_0}\n"
+	def text(self) -> Template:
+		out = t""
+		out += t" ↑{self.hit_0}\n"
 		if self.hit_1:
-			out += f" ↑{self.hit_1.after(self.hit_0)}\n"
-			if self.hit_2: out += f" ↑{self.hit_2.after(self.hit_1)}\n"
-		out += f' ↓{self.backswing}f / ⏲{self.tba}f\n'
+			out += t" ↑{self.hit_1.after(self.hit_0)}\n"
+			if self.hit_2: out += t" ↑{self.hit_2.after(self.hit_1)}\n"
+		out += t' ↓{self.backswing} / ⏲{self.tba}\n'
 		return out
 
 	def scale(self, level_mult: float, treasure_mult: float = 0) -> Self:
@@ -66,13 +67,13 @@ class AttackBreakup(Model):
 		return [hit for hit in (self.hit_0, self.hit_1, self.hit_2) if hit is not None]
 
 	@property
-	def fullswing(self) -> int:
-		return self.hits()[-1].foreswing + self.backswing
+	def fullswing(self) -> Duration:
+		return Duration(self.hits()[-1].foreswing + self.backswing)
 
 	@property
-	def cd_effective(self) -> int:
-		return self.hits()[-1].foreswing + max(self.backswing, self.cooldown - 1)
+	def cd_effective(self) -> Duration:
+		return Duration(self.hits()[-1].foreswing + max(self.backswing, self.cooldown - Duration(1)))
 
 	@property
-	def tba(self) -> int:
-		return self.cd_effective - self.fullswing
+	def tba(self) -> Duration:
+		return Duration(self.cd_effective - self.fullswing)

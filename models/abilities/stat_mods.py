@@ -1,8 +1,8 @@
 # only used for talents
+import functools
 from typing import TYPE_CHECKING
 
 from commons.models.trait import PseudoTrait, Trait
-
 from .base import Ability
 from .mult import Mult
 
@@ -18,14 +18,27 @@ class BaseStatMod(Ability):
 type StatMod = StatModAbs | StatModRel | AddTargets | AddPTargets | AddMults
 
 
+def deep_getattr(obj, attr: str):
+	return functools.reduce(getattr, attr.split('.'), obj)
+
+
+def deep_setattr(obj, attr: str, value) -> None:
+	parts = attr.split('.')
+	try:
+		child = deep_getattr(obj, ".".join(parts[:-1]))
+	except AttributeError:
+		child = None
+	setattr(child if child else obj, parts[-1], value)
+
+
 class StatModAbs(BaseStatMod):
 	stat_name: str
 	val: int
 
 	def apply(self, cat: 'Form'):
-		base_val = cat.__getattribute__(self.stat_name)
+		base_val = deep_getattr(cat, self.stat_name)
 		new_val = base_val + self.val
-		cat.__setattr__(self.stat_name, new_val)
+		deep_setattr(cat, self.stat_name, new_val)
 
 	def __str__(self):
 		return f"{self.val:+} {self.stat_name}"
