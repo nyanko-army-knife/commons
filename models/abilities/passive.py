@@ -167,7 +167,7 @@ class SavageBlow(BaseOffensive):
 	amount: float
 
 	def __str__(self):
-		return f"{self.chance}% chance to deal a savage blow which does +{self.amount}% damage"
+		return f"{self.chance}% chance to deal a savage blow which does +{self.amount:.0f}% damage"
 
 
 class Burrow(BaseOffensive):

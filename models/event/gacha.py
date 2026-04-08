@@ -20,7 +20,7 @@ SERIES = ["Tales of the Nekoluga", "The Dynamites", "Sengoku Wargods Vajiras", "
 					"Gals of Summer Blue Ocean",
 					"Ultra 4 Selection", "Miracle 4 Selection", "Excellent 4 Selection", "100M DL Celebration",
 					"Best of the Best (Milestone Edition)", "Seasonal GGals Step-Up Banner", "Baki Collab", "Demon Slayer Collab",
-					"fuckwhat"]
+					"RoyalFest"]
 
 # IDs offset -1
 REINFORCEMENTS = {

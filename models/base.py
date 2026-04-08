@@ -20,13 +20,13 @@ class Duration(int, Msg[int]):
 		return Duration(i)
 
 	def __format__(self, format_spec: str) -> str:
-		if format_spec == '':
+		if 'f' not in format_spec and 's' not in format_spec:
 			format_spec = 'f' if self <= 150 else 's'
 		match format_spec:
 			case 's':
-				return f"{int(self) / 30:.02f}s"
+				return f"{int(self) / 30:.02,f}s"
 			case 'f' | _:
-				return f"{int(self)}f"
+				return f"{int(self):,}f"
 
 
 class Model(msgspec.Struct, tag=to_camelcase, tag_field="_klass"):
