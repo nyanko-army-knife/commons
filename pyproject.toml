@@ -1,0 +1,13 @@
+[project]
+name = "nak-commons"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "msgspec>=0.20.0",
+    "rapidfuzz>=3.13.0",
+]
+
+[tool.setuptools.packages.find]
+include = ["models", "utils"]
