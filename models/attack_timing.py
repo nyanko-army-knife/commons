@@ -25,7 +25,7 @@ class Hit(Model):
 	# replaces foreswing with delay
 	def after(self, other: Self) -> Self:
 		toret = deepcopy(self)
-		toret.foreswing -= other.foreswing
+		toret.foreswing = Duration(toret.foreswing - other.foreswing)
 		return toret
 
 	def text(self) -> Template:
