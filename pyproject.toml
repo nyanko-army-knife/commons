@@ -15,3 +15,7 @@ include = ["models", "utils"]
 
 [build-system]
 build-backend="uv_build"
+
+[tool.uv.build-backend]
+module-name = "commons"
+module-root = ""
