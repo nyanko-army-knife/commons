@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING, Optional
 
 from commons.models.base import Model
 
-from ... import c
+from commons import c
 from .. import ActiveAbility, Extension
 from ..abilities import (
 	BaseActiveAbility,
