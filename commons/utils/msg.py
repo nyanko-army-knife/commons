@@ -8,12 +8,12 @@ import msgspec
 class Msg[T](Protocol):
 	@abstractmethod
 	def enc(self) -> T:
-		raise NotImplementedError
+		...
 
 	@classmethod
 	@abstractmethod
 	def dec(cls, val: T) -> Self:
-		raise NotImplementedError
+		...
 
 
 def enc_hook(obj: Any) -> Any:

@@ -3,21 +3,19 @@ from string.templatelib import Template
 from typing import Self
 
 import msgspec
-
 from commons.utils.msg import Msg
 
 
 def to_camelcase(x: str) -> str:
 	return re.sub(r'(?<!^)(?=[A-Z])', '_', x).lower()
 
-
 class Duration(int, Msg[int]):
 	def enc(self) -> int:
 		return int(self)
 
 	@classmethod
-	def dec(cls, i: int) -> Self:
-		return Duration(i)
+	def dec(cls, val: int) -> Self:
+		return cls(val)
 
 	def __format__(self, format_spec: str) -> str:
 		if 'f' not in format_spec and 's' not in format_spec:

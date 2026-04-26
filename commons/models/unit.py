@@ -104,11 +104,13 @@ class Cat(Model):
 
 		if not upcast:  # we are sure about level
 			if level < 10:
-				form_id = FormID.BASE
+				form_id = FormID.BASE.value
 			elif level < max(20, self.tf_level):
-				form_id = min(FormID.EVOLVED.value, try_form_id)
-			elif level < self.uf_level:
-				form_id = min(FormID.TRUE.value, try_form_id)
+				form_id = FormID.EVOLVED.value
+			elif self.uf_level < 0 or level < self.uf_level:
+				form_id = FormID.TRUE.value
+			else:
+				form_id = FormID.ULTRA.value
 		else:  # we are sure about form_id
 			if form_id == FormID.EVOLVED and try_level < 10:
 				level = 10

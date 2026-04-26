@@ -39,7 +39,7 @@ class GachaSchedule(Model):
 		if self.modifier & 0b0100:
 			modifiers.append("S")  # step up
 		if self.modifier & 0b1000:
-			modifiers.append(f"I{(self.modifier & 0b0011_1111_1111_0000) >> 3}")  # step up
+			modifiers.append(f"I")  # {(self.modifier & 0b0011_1111_1111_0000) >> 3}")  # item drop
 		if self.modifier & 0b0100_0000_0000_0000:
 			modifiers.append("P")  # platinum shard
 		if self.roll_rates[-2] > 5000:

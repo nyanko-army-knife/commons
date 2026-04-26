@@ -15,12 +15,12 @@ def damage_scale(dmg: int, level_mult: float, treasure_mult: float) -> int:
 
 
 class Hit(Model):
-	use_ability: bool
-	separate_range: bool
-	damage: int
-	range_start: int
-	range_width: int
-	foreswing: Duration
+	use_ability: bool = False
+	separate_range: bool = False
+	damage: int = 0
+	range_start: int = 0
+	range_width: int = 0
+	foreswing: Duration = Duration(0)
 
 	# replaces foreswing with delay
 	def after(self, other: Self) -> Self:
@@ -44,8 +44,8 @@ class AttackBreakup(Model):
 	hit_0: Hit = field(default_factory=Hit)
 	hit_1: Optional[Hit] = None
 	hit_2: Optional[Hit] = None
-	backswing: Duration = -1
-	cooldown: Duration = -1
+	backswing: Duration = Duration(-1)
+	cooldown: Duration = Duration(-1)
 
 	def text(self) -> Template:
 		out = t""

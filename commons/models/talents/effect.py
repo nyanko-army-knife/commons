@@ -1,8 +1,9 @@
+from functools import reduce
+from operator import add
 from typing import TYPE_CHECKING, Optional
 
-from commons.models.base import Model
-
 from commons import c
+from commons.models.base import Model
 from .. import ActiveAbility, Extension
 from ..abilities import (
 	BaseActiveAbility,
@@ -31,10 +32,10 @@ class Effect[T: EffectAbility](Model):
 		if not (max_level >= level > 0): level = max_level
 		if level == 1 or self.level_max is None: return self.level_1
 
-		diff = (self.level_max - self.level_1) // (max_level - 1)
-		out = self.level_1
-		for i in range(level - 1):
-			out += diff
+		out = reduce(add, [self.level_1] * max_level)
+		for i in range(level):
+			out += (self.level_max - self.level_1)
+		out //= max_level
 		return out
 
 

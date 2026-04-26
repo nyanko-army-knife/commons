@@ -1,4 +1,5 @@
 import itertools
+import json
 from operator import attrgetter
 from typing import Optional
 
@@ -9,6 +10,7 @@ from commons.models.combo import Combo, ComboCondition
 from commons.models.enemy import Enemy
 from commons.models.item import Item
 from commons.models.stage import Category, Map, Stage
+from commons.models.stamp import Stamp
 from commons.models.talents import Talent
 from commons.utils import msg
 from commons.utils.index import Index
@@ -22,6 +24,9 @@ categories: dict[str, Category]
 combos: Index[Combo]
 talents: dict[int, list[Talent]]
 items: dict[int, Item]
+items_by_server_id: dict[int, Item]
+sales: dict[int, str]
+stamps: dict[int, Stamp]
 gacha: dict[str, Gacha]
 
 
@@ -39,8 +44,8 @@ def load_enemies():
 	global enemies
 
 	with open('data/db/enemies.json') as fl:
-		e = msg.dec(list[Enemy]).decode(fl.read())
-	enemies = Index[Enemy](e, attrgetter("name"), None)
+		e = msg.dec(list[Optional[Enemy]]).decode(fl.read())
+	enemies = Index[Enemy](e, attrgetter("name"), attrgetter("aliases"))
 
 
 def load_stages():
@@ -71,9 +76,13 @@ def load_talents():
 
 def load_items():
 	global items
+	global items_by_server_id
 
 	with open('data/db/items.json') as fl:
 		items = {i.id_: i for i in msgspec.json.decode(fl.read(), type=list[Item])}
+
+	with open('data/db/items.json') as fl:
+		items_by_server_id = {i.server_id: i for i in msgspec.json.decode(fl.read(), type=list[Item])}
 
 
 def load_gacha():
@@ -84,6 +93,21 @@ def load_gacha():
 						 msgspec.json.decode(fl.read(), type=list[Gacha])}
 
 
+def load_sales():
+	global sales
+
+	with open('data/db/sales.json') as fl:
+		sales = {int(k): v for k, v in json.loads(fl.read()).items()}
+
+
+def load_stamps():
+	global stamps
+
+	with open('data/db/stamps.json') as fl:
+		s = msg.dec(list[Stamp]).decode(fl.read())
+	stamps = {stamp.id_: stamp for stamp in s}
+
+
 def setup():
 	load_cats()
 	load_stages()
@@ -92,3 +116,5 @@ def setup():
 	load_talents()
 	load_items()
 	load_gacha()
+	load_sales()
+	load_stamps()
