@@ -118,6 +118,7 @@ class Cat(Model):
 				level = max(20, self.tf_level)
 			elif try_form_id == FormID.ULTRA and try_level < self.uf_level:
 				level = self.uf_level
+		form_id = min(form_id, len(self.forms()) - 1)
 		return self[form_id].to_level(level, self.level_curve), level
 
 	def to_level(self, level: int) -> Self:
