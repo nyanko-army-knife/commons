@@ -64,10 +64,10 @@ class ItemSchedule(Model):
 
 class PonosCron(Model):
 	_klass = "ponoscron"
-	yearly_schedules: list[Span[str]]
+	yearly_schedules: list[Span[int]]
 	monthly_schedules: list[int]
 	weekly_schedules: int  # bitmask
-	daily_schedules: list[Span[str]]
+	daily_schedules: list[Span[int]]
 
 
 class SaleSchedule(Model):
