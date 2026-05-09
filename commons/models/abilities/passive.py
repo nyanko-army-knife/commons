@@ -82,7 +82,7 @@ class Revive(BaseDefensive):
 	health: int
 
 	def __str__(self):
-		return f"revives to {self.health}% after {self.delay}f up to {self.count} times"
+		return f"revives to {self.health}% after {self.delay}f up to {self.count if self.count > 0 else "infinite"} times"
 
 
 class Strengthen(BaseDefensive):
