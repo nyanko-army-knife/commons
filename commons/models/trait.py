@@ -4,7 +4,7 @@ from enum import StrEnum
 class Trait(StrEnum):
 	red = "red"
 	floating = "floating"
-	black = "black"
+	dark = "dark"
 	metal = "metal"
 	white = "white"
 	angel = "angel"
