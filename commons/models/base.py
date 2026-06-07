@@ -3,15 +3,26 @@ from string.templatelib import Template
 from typing import Self
 
 import msgspec
+
 from commons.utils.msg import Msg
 
 
 def to_camelcase(x: str) -> str:
 	return re.sub(r'(?<!^)(?=[A-Z])', '_', x).lower()
 
+
 class Duration(int, Msg[int]):
 	def enc(self) -> int:
 		return int(self)
+
+	def __add__(self, other: Self) -> Self:
+		return Duration(int(self) + int(other))
+
+	def __sub__(self, other: Self) -> Self:
+		return Duration(int(self) - int(other))
+
+	def __floordiv__(self, other: Self) -> Self:
+		return Duration(int(self) // int(other))
 
 	@classmethod
 	def dec(cls, val: int) -> Self:

@@ -1,8 +1,9 @@
 from enum import StrEnum
 from string.templatelib import Template
-from typing import Union
+from typing import Union, Self
 
 from msgspec import field
+from typing_extensions import override
 
 from ..abilities.base import Ability
 from ..base import Model, Duration
@@ -88,6 +89,14 @@ class Revive(BaseDefensive):
 class Strengthen(BaseDefensive):
 	health: int
 	mult: int
+
+	@override
+	def __add__(self, other) -> Self:
+		return Strengthen(self.health, self.mult + other.mult)
+
+	@override
+	def __floordiv__(self, other) -> Self:
+		return Strengthen(self.health, self.mult // other)
 
 	def __str__(self):
 		return f"strengthens by +{self.mult}% at {self.health}% HP"
