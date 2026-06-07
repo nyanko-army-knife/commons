@@ -76,4 +76,4 @@ class SaleSchedule(Model):
 	time_span: Span[datetime]
 	ver_span: Span[Version]
 	active_on: list[PonosCron]
-	events: list[str]
+	events: list[int]
