@@ -1,10 +1,11 @@
 [project]
 name = "commons"
-version = "0.2.0"
+version = "0.3.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
+    "bs4>=0.0.2",
     "dotenv>=0.9.9",
     "msgspec>=0.20.0",
     "rapidfuzz>=3.13.0",
