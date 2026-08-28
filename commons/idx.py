@@ -37,7 +37,7 @@ def load_cats():
 		c: list[Optional[Cat]] = msg.dec(list[Optional[Cat]]).decode(fl.read())
 	units = Index[Cat](c, lambda x: str(x.id_), None)
 	forms = Index[Form](list(itertools.chain(*(cat.forms() for cat in c if cat is not None))), attrgetter("name"),
-											attrgetter("aliases"))
+		lambda x: x.aliases + ([x.name.removesuffix(" Cat")] if x.name.endswith(" Cat") else []))
 
 
 def load_enemies():

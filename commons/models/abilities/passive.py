@@ -21,7 +21,6 @@ class Proc(StrEnum):
 	Warp = "warp"
 	BossWave = "boss_wave"
 	Toxic = "toxic"
-	Explosion = "explosion"
 
 
 class Immunity(Ability):

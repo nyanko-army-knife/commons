@@ -8,11 +8,18 @@ import rapidfuzz
 class Lookup(typing.NamedTuple):
 	name: str
 	score: float
-	key: str
+	key: int
 
+def algo_slow(a, b, *, processor=None, score_cutoff=None):
+	# we don't pass score_cutoff into individual algorithms because that would cause premature termination.
+	x = rapidfuzz.fuzz.WRatio(a, b, processor=processor)
+	y = rapidfuzz.fuzz.partial_token_sort_ratio(a, b, processor=processor)
+	return (x*2 + y*4)/6
 
 QUICK_THRESHOLD = 80
-SLOW_THRESHOLD = 70
+ALGO_QUICK = rapidfuzz.fuzz.ratio
+SLOW_THRESHOLD = 50
+ALGO_SLOW = algo_slow
 
 
 class Index[T]:
@@ -27,41 +34,36 @@ class Index[T]:
 		self.items = items
 		self.lookup_dict = {namegetter(x).lower(): x for x in items if x is not None}
 		if aliasgetter:
-			self.lookup_dict |= {alias: x for x in items if x is not None for alias in aliasgetter(x)}
+			self.lookup_dict |= {alias.lower(): x for x in items if x is not None for alias in aliasgetter(x)}
 		self.namegetter = namegetter
 
 	@lru_cache(maxsize=1 << 10)
 	def lookup(self, target: str) -> T:
+		"""loads closest item in index to target string"""
+
 		target = target.lower()
-		# noinspection PyTypeChecker
-		name, score, key = rapidfuzz.process.extractOne(target, self.lookup_dict.keys(), scorer=rapidfuzz.fuzz.QRatio)
-		if score >= QUICK_THRESHOLD:
-			return self.lookup_dict[name]
-		else:
-			name, score, key = rapidfuzz.process.extractOne(target, self.lookup_dict.keys())
-			return self.lookup_dict[name]
+		(name, score, _key) = rapidfuzz.process.extractOne(target, self.lookup_dict.keys(), scorer=ALGO_QUICK)
+		if score < QUICK_THRESHOLD:
+			# due to some bug extractOne is inconsistent with extract
+			name, _score, _key = rapidfuzz.process.extract(target, self.lookup_dict.keys(), scorer=ALGO_SLOW, limit=1)[0]
+		return self.lookup_dict[name]
 
 	@lru_cache(maxsize=1 << 10)
 	def lookup_with_score(self, target: str) -> tuple[T, float]:
 		target = target.lower()
-		# noinspection PyTypeChecker
-		name, score, key = rapidfuzz.process.extractOne(target, self.lookup_dict.keys(), scorer=rapidfuzz.fuzz.QRatio)
-		if score >= QUICK_THRESHOLD:
-			return self.lookup_dict[name], score
-		else:
-			name, _, key = rapidfuzz.process.extractOne(target, self.lookup_dict.keys())
-			return self.lookup_dict[name], rapidfuzz.fuzz.QRatio(target, name)
+		(name, score, _key) = rapidfuzz.process.extractOne(target, self.lookup_dict.keys(), scorer=ALGO_QUICK)
+		if score < QUICK_THRESHOLD:
+			name, score, _key = rapidfuzz.process.extractOne(target, self.lookup_dict.keys(), scorer=ALGO_SLOW)
+		return (self.lookup_dict[name], score)
 
 	@lru_cache(maxsize=1 << 10)
 	def lookup_debug(self, target: str, force_quick: bool = False) -> tuple[bool, list[Lookup]]:
 		target = target.lower()
-		# noinspection PyTypeChecker
 		lookups: list[Lookup] = [Lookup(*x) for x in
-														 rapidfuzz.process.extract(target, self.lookup_dict.keys(), scorer=rapidfuzz.fuzz.QRatio)]
-		if lookups[0].score >= QUICK_THRESHOLD or force_quick:
+														 rapidfuzz.process.extract(target, self.lookup_dict.keys(), scorer=ALGO_QUICK)]
+		if lookups[0].score > QUICK_THRESHOLD or force_quick:
 			return True, lookups
-
-		lookups = [Lookup(*x) for x in rapidfuzz.process.extract(target, self.lookup_dict.keys())]
+		lookups = [Lookup(*x) for x in rapidfuzz.process.extract(target, self.lookup_dict.keys(), scorer=ALGO_SLOW)]
 		return False, lookups
 
 	def get(self, id_: int) -> T:
