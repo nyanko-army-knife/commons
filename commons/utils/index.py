@@ -22,7 +22,6 @@ ALGO_QUICK = rapidfuzz.fuzz.ratio
 SLOW_THRESHOLD = 50
 ALGO_SLOW = algo_slow
 
-
 class Index[T]:
 	items: list[T]
 	lookup_dict: dict[str, T]
@@ -45,8 +44,7 @@ class Index[T]:
 		target = target.lower()
 		(name, score, _key) = rapidfuzz.process.extractOne(target, self.lookup_dict.keys(), scorer=ALGO_QUICK)
 		if score < QUICK_THRESHOLD:
-			# due to some bug extractOne is inconsistent with extract
-			name, _score, _key = rapidfuzz.process.extract(target, self.lookup_dict.keys(), scorer=ALGO_SLOW, limit=1)[0]
+			name, _score, _key = rapidfuzz.process.extractOne(target, self.lookup_dict.keys(), scorer=ALGO_SLOW)
 		return self.lookup_dict[name]
 
 	@lru_cache(maxsize=1 << 10)
