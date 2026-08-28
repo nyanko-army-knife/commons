@@ -16,7 +16,11 @@ def test_lookup(subtests):
 		("meraser", "Manic Eraser Cat"),
 		("lil eraser", "Li'l Eraser Cat"),
 		("uril", "Master Uril"),
-		("red Ranger", "Red Nyanko Ranger")
+		("red Ranger", "Red Nyanko Ranger"),
+		("green ranger", "Green Nyanko Ranger"),
+		("pink ranger", "Pink Nyanko Ranger"),
+		("blue ranger", "Blue Nyanko Ranger"),
+		("yelo ragte", "Yellow Nyanko Ranger")
 	]
 	idx.load_cats()
 

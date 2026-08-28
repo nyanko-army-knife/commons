@@ -14,7 +14,8 @@ def algo_slow(a, b, *, processor=None, score_cutoff=None):
 	# we don't pass score_cutoff into individual algorithms because that would cause premature termination.
 	x = rapidfuzz.fuzz.WRatio(a, b, processor=processor)
 	y = rapidfuzz.fuzz.partial_token_sort_ratio(a, b, processor=processor)
-	return (x*2 + y*4)/6
+	z = rapidfuzz.fuzz.token_set_ratio(a, b, processor=processor)
+	return (x*2 + y*4 + z*4)/10
 
 QUICK_THRESHOLD = 80
 ALGO_QUICK = rapidfuzz.fuzz.ratio
