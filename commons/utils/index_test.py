@@ -20,7 +20,8 @@ def test_lookup(subtests):
 		("green ranger", "Green Nyanko Ranger"),
 		("pink ranger", "Pink Nyanko Ranger"),
 		("blue ranger", "Blue Nyanko Ranger"),
-		("yelo ragte", "Yellow Nyanko Ranger")
+		("yelo ragte", "Yellow Nyanko Ranger"),
+		("balrog", "Greater Balrog Cat")
 	]
 	idx.load_cats()
 
