@@ -26,3 +26,7 @@ class Entity(Model):
 	abilities: list[ActiveAbility] = field(default_factory=list)
 	passives: Passives = field(default_factory=Passives)
 	breakup: AttackBreakup = field(default_factory=AttackBreakup)
+
+	@property
+	def dps(self) -> float:
+		return 30 * self.atk / self.breakup.cd_effective
