@@ -184,7 +184,7 @@ class Burrow(BaseOffensive):
 	distance: int
 
 	def __str__(self):
-		return f"burrows by {self.distance} up to {self.count} time/s"
+		return f"burrows by {self.distance // 4} up to {self.count} time/s"
 
 
 class Conjure(BaseOffensive):
