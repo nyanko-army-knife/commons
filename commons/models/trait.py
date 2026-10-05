@@ -1,25 +1,23 @@
-from enum import StrEnum
+from enum import Flag
 
 
-class Trait(StrEnum):
-	red = "red"
-	floating = "floating"
-	dark = "dark"
-	metal = "metal"
-	white = "white"
-	angel = "angel"
-	alien = "alien"
-	zombie = "zombie"
-	relic = "relic"
-	aku = "aku"
+class Traits(Flag):
+	Red = 1 << 0
+	Floating = 1 << 1
+	Dark = 1 << 2
+	Metal = 1 << 3
+	Angel = 1 << 4
+	Alien = 1 << 5
+	Zombie = 1 << 6
+	Relic = 1 << 7
+	White = 1 << 8
+	Aku = 1 << 11
 
 
-class PseudoTrait(StrEnum):
-	base = "base"
-	witch = "witch"
-	eva_angel = "eva angel"
-	starred_alien = "starred alien"
-	colossus = "colossus"
-	behemoth = "behemoth"
-	sage = "sage"
-	supervillain = "supervillain"
+class PseudoTraits(Flag):
+	Witch = 1 << 0
+	EvaAngel = 1 << 1
+	Behemoth = 1 << 2
+	Sage = 1 << 3
+	Colossus = 1 << 4
+	Sentai = 1 << 5

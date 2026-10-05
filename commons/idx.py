@@ -4,14 +4,16 @@ from operator import attrgetter
 from typing import Optional
 
 import msgspec.json
+import serde.json
+from typing import Any
 
-from commons.models import Cat, Form, Gacha
+from commons.models import Cat, Form, Gacha, FormID
 from commons.models.combo import Combo, ComboCondition
 from commons.models.enemy import Enemy
 from commons.models.item import Item
 from commons.models.stage import Category, Map, Stage
 from commons.models.stamp import Stamp
-from commons.models.talents import Talent
+from commons.models.talents import Talent, UnitTalents
 from commons.utils import msg
 from commons.utils.index import Index
 
@@ -22,7 +24,7 @@ stages: Index[Stage]
 maps: Index[Map]
 categories: dict[str, Category]
 combos: Index[Combo]
-talents: dict[int, list[Talent]]
+talents: dict[int, UnitTalents]
 items: dict[int, Item]
 items_by_server_id: dict[int, Item]
 sales: dict[int, str]
@@ -32,20 +34,31 @@ gacha: dict[str, Gacha]
 
 def load_cats():
 	global units, forms
+	pass
 
-	with open('data/db/cats.json', mode='rb') as fl:
-		c: list[Optional[Cat]] = msg.dec(list[Optional[Cat]]).decode(fl.read())
+	with open('data/db/cats.json', 'rb') as fl:
+		c: list[Optional[Cat]] = serde.json.from_json(list[Optional[Cat]], fl.read())
+
+	for i, cat in enumerate(c):
+		if cat is None: continue
+		cat.id_ = i
+		for j, form in enumerate(cat.forms()):
+			form.id_ = (i, FormID(j))
+
 	units = Index[Cat](c, lambda x: str(x.id_), None)
 	forms = Index[Form](list(itertools.chain(*(cat.forms() for cat in c if cat is not None))), attrgetter("name"),
-		lambda x: x.aliases)
+											lambda x: x.aliases)
 
 
 def load_enemies():
 	global enemies
 
 	with open('data/db/enemies.json') as fl:
-		e = msg.dec(list[Optional[Enemy]]).decode(fl.read())
-	enemies = Index[Enemy](e, attrgetter("name"), attrgetter("aliases"))
+		ex: list[Optional[Enemy]] = serde.json.from_json(list[Optional[Enemy]], fl.read())
+	for i, e in enumerate(ex):
+		if e is not None:
+			e.id_ = i
+	enemies = Index[Enemy](ex, attrgetter("name"), attrgetter("aliases"))
 
 
 def load_stages():
@@ -53,8 +66,7 @@ def load_stages():
 
 	with open('data/db/stages.json') as fl:
 		s = msgspec.json.decode(fl.read(), type=list[Category])
-	stages = Index[Stage](list(itertools.chain(*(map_.stages for cat in s for map_ in cat.maps))), attrgetter("name"),
-												None)
+	stages = Index[Stage](list(itertools.chain(*(map_.stages for cat in s for map_ in cat.maps))), attrgetter("name"), None)
 	maps = Index[Map](list(itertools.chain(*(cat.maps for cat in s))), attrgetter("name"), None)
 	categories = {cat.id_: cat for cat in s}
 
@@ -71,7 +83,7 @@ def load_talents():
 	global talents
 
 	with open('data/db/talents.json') as fl:
-		talents = msg.dec(dict[int, list[Talent]]).decode(fl.read())
+		talents = serde.json.from_json(dict[int, UnitTalents], fl.read())
 
 
 def load_items():

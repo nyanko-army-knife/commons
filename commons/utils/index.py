@@ -23,13 +23,13 @@ SLOW_THRESHOLD = 50
 ALGO_SLOW = algo_slow
 
 class Index[T]:
-	items: list[T]
+	items: list[T | None]
 	lookup_dict: dict[str, T]
 
 	def __getitem__(self, item) -> T:
 		return self.items[item]
 
-	def __init__(self, items: list[T], namegetter: Callable[[T], str],
+	def __init__(self, items: list[T | None], namegetter: Callable[[T], str],
 							 aliasgetter: typing.Optional[Callable[[T], list[str]]]):
 		self.items = items
 		self.lookup_dict = {namegetter(x).lower(): x for x in items if x is not None}
@@ -65,5 +65,5 @@ class Index[T]:
 		lookups = [Lookup(*x) for x in rapidfuzz.process.extract(target, self.lookup_dict.keys(), scorer=ALGO_SLOW)]
 		return False, lookups
 
-	def get(self, id_: int) -> T:
+	def get(self, id_: int) -> T | None:
 		return self.items[id_]

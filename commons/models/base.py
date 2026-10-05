@@ -1,8 +1,11 @@
+from plum import dispatch
+import enum
 import re
 from string.templatelib import Template
-from typing import Self
+from typing import Self, TypeVar, Any
 
 import msgspec
+import serde
 
 from commons.utils.msg import Msg
 
@@ -11,17 +14,58 @@ def to_camelcase(x: str) -> str:
 	return re.sub(r'(?<!^)(?=[A-Z])', '_', x).lower()
 
 
+E = TypeVar("E", bound=enum.Flag)
+def deser_flag[E: enum.Flag](cls: type[E], val: str):
+	out = cls(0)
+	if val is "":
+		return out
+
+	tags = val.split(" | ")
+	for tag in tags:
+		out |= cls[tag]
+	return out
+
+
+def ser_flag[E: enum.Flag](val: E) -> str:
+	return val.name.replace('|', ' | ') if val.name else ""
+
+
+def bitflag_field(cls: type[E]) -> Any:
+	return serde.field(serializer=lambda x: ser_flag(x), deserializer=lambda x: deser_flag(cls, x), default=cls(0))
+
+def intenum_field(cls: type[enum.IntEnum]) -> Any:
+	return serde.field(
+		serializer=lambda x: x.name,
+		deserializer=lambda x: cls[x],
+		default=0
+	)
+
+def strenum_list_field(cls: type[enum.StrEnum]) -> Any:
+	return serde.field(
+		serializer=lambda xs: [x.name for x in xs],
+		deserializer=lambda xs: [cls[x] for x in xs],
+		default_factory=list,
+	)
+
+def strenum_field(cls: type[enum.StrEnum]) -> Any:
+	return serde.field(
+		serializer=lambda xs: xs.name,
+		deserializer=lambda xs: cls[xs],
+		default_factory=cls,
+	)
+
+
 class Duration(int, Msg[int]):
 	def enc(self) -> int:
 		return int(self)
 
-	def __add__(self, other: Self) -> Self:
+	def __add__(self, other: Any) -> Duration:
 		return Duration(int(self) + int(other))
 
-	def __sub__(self, other: Self) -> Self:
+	def __sub__(self, other: Any) -> Duration:
 		return Duration(int(self) - int(other))
 
-	def __floordiv__(self, other: Self) -> Self:
+	def __floordiv__(self, other: Any) -> Duration:
 		return Duration(int(self) // int(other))
 
 	@classmethod

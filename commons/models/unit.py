@@ -1,3 +1,6 @@
+from unittest import skip
+from commons.models.base import intenum_field, strenum_list_field
+import serde
 import functools
 from copy import deepcopy
 from enum import IntEnum
@@ -11,26 +14,26 @@ from commons.models.entity import Entity
 
 
 class Rarity(IntEnum):
-	NORMAL = 0
-	SPECIAL = 1
-	RARE = 2
-	SUPER_RARE = 3
-	UBER_RARE = 4
-	LEGEND_RARE = 5
+	Normal = 0
+	Special = 1
+	Rare = 2
+	SuperRare = 3
+	UberRare = 4
+	LegendRare = 5
 
 	@property
 	def label(self):
-		return self.name.title().replace("_", " ")
+		return self.name
 
 
 class UnlockMethod(IntEnum):
-	STAGE = 0
-	BUY = 1
-	GACHA = 2
+	Stage = 0
+	Buy = 1
+	Gacha = 2
 
 	@property
 	def label(self):
-		return self.name.title().replace("_", " ")
+		return self.name
 
 
 class FormID(IntEnum):
@@ -41,23 +44,23 @@ class FormID(IntEnum):
 
 	@property
 	def label(self):
-		return self.name.title().replace("_", " ")
+		return self.name.title()
 
 
+@serde.serde(skip_if_default=True)
 class Form(Entity):
 	id_: tuple[int, FormID] = (-1, FormID.BASE)
 
-	mults: list[Mult] = field(default_factory=list)
-	cooldown: Duration = 0
+	mults: list[Mult] = strenum_list_field(cls=Mult)
+	cooldown: Duration = Duration(0)
 	cost: int = 0
 
-	def to_level(self, level: int, curve: list[int]) -> 'Form':
+	def to_level(self, level: int, curve: list[int]) -> Self:
 		toret = deepcopy(self)
 		mult = 1 + sum(curve[i // 10] for i in range(1, level)) / 100
 		toret.breakup = toret.breakup.scale(mult, 1.5)
-		toret.atk = int(sum(hit.damage for hit in toret.breakup.hits()))
-		toret.hp = int(round(toret.hp * mult) * 2.5)
-		toret.cost = int(toret.cost * 1.5)
+		toret.damage = int(sum(hit.damage for hit in toret.breakup.hits()))
+		toret.health = int(round(toret.health * mult) * 2.5)
 		toret.cooldown = Duration(max(toret.cooldown * 2 - 264, 48))  # (research_level - 1) * 6 + treasures * 30
 		return toret
 
@@ -65,32 +68,33 @@ class Form(Entity):
 	def id_char(self):
 		return 'fcsu'[self.id_[-1]]
 
-
-class Cat(Model):
+@serde.serde(skip_if_default=True)
+class Cat:
 	id_: int = 0
-	level_curve: list[int] = field(default_factory=list)
-	xp_curve: list[int] = field(default_factory=list)
-	rarity: Rarity = Rarity.NORMAL
-	tf_reqs: list[tuple[int, int]] = field(default_factory=list)
+	level_curve: list[int] = serde.field(default_factory=list)
+	xp_curve: list[int] = serde.field(default_factory=list)
+	rarity: Rarity = intenum_field(Rarity)
+	tf_reqs: list[tuple[int, int]] = serde.field(default_factory=list)
 	tf_level: int = 0
 	tf_xp: int = 0
-	uf_reqs: list[tuple[int, int]] = field(default_factory=list)
+	uf_reqs: list[tuple[int, int]] = serde.field(default_factory=list)
 	uf_level: int = 0
 	uf_xp: int = 0
-	max_level: tuple[int, int, int] = (-1, -1, -1)  # max level, max level with catseyes, max plus level
-	unlock_method: UnlockMethod = UnlockMethod.BUY
+	guide_order: int = 0
+	max_levels: tuple[int, int, int] = (-1, -1, -1)  # max level, max level with catseyes, max plus level
+	unlock_method: UnlockMethod = intenum_field(UnlockMethod)
 
-	form_base: Optional[Form] = None
-	form_evolved: Optional[Form] = None
-	form_true: Optional[Form] = None
-	form_ultra: Optional[Form] = None
+	base_form: Optional[Form] = None
+	evolved_form: Optional[Form] = None
+	true_form: Optional[Form] = None
+	ultra_form: Optional[Form] = None
 
 	@property
 	def levelcap(self):
-		return self.max_level[1] + self.max_level[2]
+		return self.max_levels[1] + self.max_levels[2]
 
 	def forms(self) -> list[Form]:
-		return [form for form in (self.form_base, self.form_evolved, self.form_true, self.form_ultra) if form is not None]
+		return [form for form in (self.base_form, self.evolved_form, self.true_form, self.ultra_form) if form is not None]
 
 	def form_to_level(self, try_form_id: int, try_level: int, upcast: bool = False) -> tuple[Form, int]:
 		"""
@@ -129,14 +133,14 @@ class Cat(Model):
 
 		fill_cat_curve = apply_level_curve(level, self.level_curve)
 
-		if toret.form_base:
-			toret.form_base = fill_cat_curve(toret.form_base.to_level)()
-		if toret.form_evolved:
-			toret.form_evolved = fill_cat_curve(toret.form_evolved.to_level)()
-		if toret.form_true:
-			toret.form_true = fill_cat_curve(toret.form_true.to_level)()
-		if toret.form_ultra:
-			toret.form_ultra = fill_cat_curve(toret.form_ultra.to_level)()
+		if toret.base_form:
+			toret.base_form = fill_cat_curve(toret.base_form.to_level)()
+		if toret.evolved_form:
+			toret.evolved_form = fill_cat_curve(toret.evolved_form.to_level)()
+		if toret.true_form:
+			toret.true_form = fill_cat_curve(toret.true_form.to_level)()
+		if toret.ultra_form:
+			toret.ultra_form = fill_cat_curve(toret.ultra_form.to_level)()
 		return toret
 
 	def __getitem__(self, item):

@@ -2,9 +2,9 @@ from copy import deepcopy
 from string.templatelib import Template
 from typing import Optional, Self
 
-from msgspec import field
+import serde
 
-from commons.models.base import Model, Duration
+from commons.models.base import Duration
 
 
 def damage_scale(dmg: int, level_mult: float, treasure_mult: float) -> int:
@@ -14,12 +14,11 @@ def damage_scale(dmg: int, level_mult: float, treasure_mult: float) -> int:
 	return dmg
 
 
-class Hit(Model):
+@serde.serde(skip_if_default=True)
+class Hit:
 	use_ability: bool = False
-	separate_range: bool = False
+	separate_range: Optional[tuple[int, int]] = None
 	damage: int = 0
-	range_start: int = 0
-	range_width: int = 0
 	foreswing: Duration = Duration(0)
 
 	# replaces foreswing with delay
@@ -36,24 +35,31 @@ class Hit(Model):
 			out += t"{self.damage}"
 
 		if self.separate_range:
-			out += t' [{self.range_start}~{self.range_start + self.range_width}]'
+			range_start, range_width = self.separate_range
+			out += t' [{range_start}~{range_start + range_width}]'
 		return out
 
 
-class AttackBreakup(Model):
-	hit_0: Hit = field(default_factory=Hit)
+@serde.serde(skip_if_default=True)
+class AttackBreakup:
+	hit_0: Hit = serde.field(default_factory=Hit)
 	hit_1: Optional[Hit] = None
 	hit_2: Optional[Hit] = None
 	backswing: Duration = Duration(-1)
 	cooldown: Duration = Duration(-1)
 
 	def text(self) -> Template:
+		toprint = deepcopy(self)
+		# don't print hit0-range for non-seperate-range units
+		if toprint.hit_1 and not toprint.hit_1.separate_range:
+			toprint.hit_0.separate_range = None
+
 		out = t""
-		out += t" ↑{self.hit_0}\n"
-		if self.hit_1:
-			out += t" ↑{self.hit_1.after(self.hit_0)}\n"
-			if self.hit_2: out += t" ↑{self.hit_2.after(self.hit_1)}\n"
-		out += t' ↓{self.backswing} / ⏲{self.tba}\n'
+		out += t" ↑{toprint.hit_0}\n"
+		if toprint.hit_1:
+			out += t" ↑{toprint.hit_1.after(toprint.hit_0)}\n"
+			if toprint.hit_2: out += t" ↑{toprint.hit_2.after(toprint.hit_1)}\n"
+		out += t' ↓{toprint.backswing} / ⏲{toprint.tba}\n'
 		return out
 
 	def scale(self, level_mult: float, treasure_mult: float = 0) -> Self:

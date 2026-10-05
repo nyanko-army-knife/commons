@@ -1,8 +1,11 @@
 # only used for talents
+import commons.models.abilities.mult as mult
+from commons.models.base import bitflag_field, strenum_field
+import serde
 import functools
 from typing import TYPE_CHECKING
 
-from commons.models.trait import PseudoTrait, Trait
+from commons.models.trait import PseudoTraits, Traits
 from .base import Ability
 from .mult import Mult
 
@@ -15,73 +18,31 @@ class BaseStatMod(Ability):
 		pass
 
 
-type StatMod = StatModAbs | StatModRel | AddTargets | AddPTargets | AddMults
-
-
-def deep_getattr(obj, attr: str):
-	return functools.reduce(getattr, attr.split('.'), obj)
-
-
-def deep_setattr(obj, attr: str, value) -> None:
-	parts = attr.split('.')
-	try:
-		child = deep_getattr(obj, ".".join(parts[:-1]))
-	except AttributeError:
-		child = None
-	setattr(child if child else obj, parts[-1], value)
-
-
-class StatModAbs(BaseStatMod):
-	stat_name: str
-	val: int
-
-	def apply(self, cat: 'Form'):
-		base_val = deep_getattr(cat, self.stat_name)
-		new_val = base_val + self.val
-		deep_setattr(cat, self.stat_name, new_val)
+@serde.serde
+class StatMod:
+	amount: int
+	relative: bool
 
 	def __str__(self):
-		return f"{self.val:+} {self.stat_name}"
+		return f"{self.amount:+}"
 
 
-class StatModRel(BaseStatMod):
-	stat_name: str
-	val: int
+@serde.serde(transparent=True)
+class Targets:
+	traits: Traits = bitflag_field(Traits)
 
-	def apply(self, cat: 'Form'):
-		base_val = cat.__getattribute__(self.stat_name)
-		new_val = int(base_val * (1 + self.val / 100))
-		cat.__setattr__(self.stat_name, new_val)
-
-	def __str__(self):
-		return f"{self.val:+}% {self.stat_name}"
+	def __ror__(self, t: Traits):
+		return t | self.traits
 
 
-class AddTargets(BaseStatMod):
-	traits: list[Trait]
+@serde.serde(transparent=True)
+class PseudoTargets:
+	ptraits: PseudoTraits = bitflag_field(PseudoTraits)
 
-	def apply(self, cat: 'Form'):
-		cat.traits.extend(self.traits)
+	def __ror__(self, t: PseudoTraits):
+		return t | self.ptraits
 
-	def __str__(self):
-		return f"adds target traits: {', '.join(self.traits)}"
-
-
-class AddPTargets(BaseStatMod):
-	traits: list[PseudoTrait]
-
-	def apply(self, cat: 'Form'):
-		cat.ptraits.extend(self.traits)
-
-	def __str__(self):
-		return f"adds target pseudotraits: {', '.join(self.traits)}"
-
-
-class AddMults(BaseStatMod):
-	mults: list[Mult]
-
-	def apply(self, cat: 'Form'):
-		cat.mults.extend(self.mults)
-
-	def __str__(self):
-		return f"adds effectiveness: {', '.join(self.mults)}"
+# wrapper that gives serde functionalities to mult talent
+@serde.serde(transparent=True)
+class AddMult:
+	mult: Mult = strenum_field(Mult)

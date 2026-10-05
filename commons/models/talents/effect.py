@@ -1,46 +1,48 @@
+from enum import Flag
+import dataclasses
+from dataclasses import dataclass
+from commons.models.trait import Traits, PseudoTraits
+import serde
 from functools import reduce
 from operator import add
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Optional, Any
 
 from commons import c
-from commons.models.base import Model
-from .. import ActiveAbility, Extension
+from commons.models.base import Model, bitflag_field
+from ..abilities import ActiveAbility, Extension, Slow, Freeze, Weaken, Wave, Proc, Immunity, Strengthen, Survive, Surge, TargetOnly, Knockback, BaseDestroyer, Critical, ZombieKiller, BarrierBreak, DoubleBounty, WaveBlock, Dodge, SavageBlow, ShieldBreak, Curse, Blast, CounterSurge, AddMult, Targets, PseudoTargets, SoulStrike
 from ..abilities import (
-	BaseActiveAbility,
-	BaseDefensive,
-	BaseExtension,
-	BaseOffensive,
+	BaseDefensives,
+	BaseOffensives,
 	BaseStatMod,
-	Defensive,
-	Immunity,
-	Offensive,
 	Resist,
 	StatMod,
 )
-
-if TYPE_CHECKING:
-	from ..unit import Form
-
-type EffectAbility = Offensive | Defensive | ActiveAbility | StatMod | Extension | Immunity | Resist
+from ..unit import Form
 
 
-class Effect[T: EffectAbility](Model):
-	level_1: T
-	level_max: Optional[T]
+type Effect = Weaken | Freeze | Slow | Wave | StatMod | Immunity | Strengthen | Survive | Targets | Surge | TargetOnly | Knockback | Resist | PseudoTargets | BaseDestroyer | Critical | ZombieKiller | BarrierBreak | DoubleBounty | WaveBlock | Dodge | SavageBlow | Surge | ShieldBreak | Curse | Blast | CounterSurge | AddMult | SoulStrike
 
-	def get_level(self, level: int, max_level: int) -> T:
-		if not (max_level >= level > 0): level = max_level
-		if level == 1 or self.level_max is None: return self.level_1
+def lerp_level[E: Effect](start: E, end: E, amount: float) -> E:
+	# if not (max_level >= level > 0): level = max_level
+	if amount == 0: return start
+	if amount == 1: return end
 
-		out = reduce(add, [self.level_1] * max_level)
-		for i in range(level):
-			out += (self.level_max - self.level_1)
-		out //= max_level
-		return out
+	out = start
+	for field in dataclasses.fields(start):
+		start_val, end_val = getattr(start, field.name), getattr(end, field.name)
+		try:
+			interp_val = start_val + (end_val - start_val) * amount
+		except TypeError:
+			interp_val = start_val
+		setattr(out, field.name, interp_val)
+	return out
 
 
-class Talent(Model):
-	effects: list[Effect[EffectAbility]]
+@serde.serde
+class Talent:
+	target: str
+	effect_min: Effect
+	effect_max: Effect
 	np_curve: list[int]
 	name: str
 	text: str
@@ -48,30 +50,44 @@ class Talent(Model):
 	is_ultra: bool = False
 
 	def apply_level_to(self, level: int, cat: 'Form') -> 'Form':
-		def upsert(elems: list, new_elem):
-			for i, elem in enumerate(elems):
-				if type(elem) is type(new_elem):
-					elems[i] = elem + new_elem
-					return
-			elems.append(new_elem)
+		def update_at(obj: Any, target: str, value: Any):
+			steps = target.split(".")
+			if steps[0] in ("immunities", "resistances", "defensives", "offensives"):
+				steps.insert(0,"passives")
 
-		for effect in self.effects:
-			e = effect.get_level(level, self.max_level)
-			match e:
-				case BaseDefensive():
-					upsert(cat.passives.defensives, e)
-				case BaseOffensive():
-					upsert(cat.passives.offensives, e)
-				case BaseStatMod():
-					e.apply(cat)
-				case BaseActiveAbility():
-					upsert(cat.abilities, e)
-				case BaseExtension():
-					upsert(cat.extensions, e)
-				case Immunity():
-					cat.passives.immunities.append(e)
-				case Resist():
-					cat.passives.resists.append(e)
-				case _:
-					c.logger.error(f"unknown effect {e}")
+			target_node = obj
+			for step in steps[:-1]:
+				target_node = getattr(target_node, step)
+
+			old_val = getattr(target_node, steps[-1])
+			new_val = value
+			if isinstance(old_val, list):
+				new_val = old_val + [value]
+			elif isinstance(old_val, Flag):
+				new_val = old_val | value
+
+			setattr(target_node, steps[-1], new_val)
+
+
+		def get_at(obj: Any, target: str):
+			target_node = obj
+			for step in target.split("."):
+				target_node = getattr(target_node, step, None)
+			return target_node
+
+
+		e = lerp_level(self.effect_min, self.effect_max, level/self.max_level)
+		if isinstance(e, StatMod):
+			curr = get_at(cat, self.target)
+			final = int(curr * (1+e.amount/100)) if e.relative else curr + e.amount
+			update_at(cat, self.target, final)
+		elif isinstance(e, AddMult):
+			update_at(cat, self.target, e.mult)
+		elif dataclasses.is_dataclass(e):
+			update_at(cat, self.target, e)
 		return cat
+
+
+@serde.serde
+class UnitTalents:
+	talents: list[Talent]

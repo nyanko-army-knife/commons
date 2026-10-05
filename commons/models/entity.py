@@ -1,32 +1,35 @@
-from msgspec import field
+from commons.models.abilities import Passives
+from commons.models.abilities import Extension, ActiveAbility
+import serde
 
-from commons.models.abilities import ActiveAbility, Extension, Passives
-from commons.models.attack_timing import AttackBreakup
-from commons.models.base import Model
-from commons.models.trait import PseudoTrait, Trait
+from commons.models import AttackBreakup
+from commons.models.base import bitflag_field
+from commons.models.trait import PseudoTraits, Traits
 
 
-class Entity(Model):
+@serde.serde(skip_if_default=True, skip_if_none=True)
+class Entity:
 	name: str
-	aliases: list[str]
-	description: str
+	description: list[str]
 
-	hp: int
-	kb: int
-	speed: int
-	atk: int
-	range_: int
-	hbox_offset: int
-	hbox_width: int
-	area_attack: bool
+	health: int
+	knockbacks: int
+	speed: int # TODO: make custom speed unit
+	damage: int
+	standing_range: int
+	# hbox_offset: int
+	# hbox_width: int
+	area_targeting: bool
 
-	traits: list[Trait] = field(default_factory=list)
-	ptraits: list[PseudoTrait] = field(default_factory=list)
-	extensions: list[Extension] = field(default_factory=list)
-	abilities: list[ActiveAbility] = field(default_factory=list)
-	passives: Passives = field(default_factory=Passives)
-	breakup: AttackBreakup = field(default_factory=AttackBreakup)
+	extensions: Extension = serde.field(flatten=True, skip_if_default=True)
+	actives: ActiveAbility = serde.field(flatten=True, skip_if_default=True)
+	passives: Passives = serde.field(flatten=True, skip_if_default=True)
+	traits: Traits = bitflag_field(Traits)
+	pseudotraits: PseudoTraits = bitflag_field(PseudoTraits)
+	aliases: list[str] = serde.field(default_factory=list)
+
+	breakup: AttackBreakup = serde.field(default_factory=AttackBreakup)
 
 	@property
 	def dps(self) -> float:
-		return 30 * self.atk / self.breakup.cd_effective
+		return 30 * self.damage / self.breakup.cd_effective
