@@ -54,13 +54,12 @@ def strenum_field(cls: type[enum.StrEnum]) -> Any:
 		default_factory=cls,
 	)
 
-
-class Duration(int, Msg[int]):
-	def enc(self) -> int:
-		return int(self)
-
+class Duration(int):
 	def __add__(self, other: Any) -> Duration:
 		return Duration(int(self) + int(other))
+
+	def __mul__(self, other: Any) -> Duration:
+		return Duration(int(self) * int(other))
 
 	def __sub__(self, other: Any) -> Duration:
 		return Duration(int(self) - int(other))

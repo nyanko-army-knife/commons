@@ -53,6 +53,7 @@ class Form(Entity):
 
 	mults: list[Mult] = strenum_list_field(cls=Mult)
 	cooldown: Duration = Duration(0)
+	alternate_cooldown: int = 0  # could also be Optional[int], but int works directly into statmod
 	cost: int = 0
 
 	def to_level(self, level: int, curve: list[int]) -> Self:
