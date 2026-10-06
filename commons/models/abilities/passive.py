@@ -1,5 +1,4 @@
 from commons.models.abilities import Dodge
-from yaml import serialize
 from enum import StrEnum
 from string.templatelib import Template
 from typing import Optional, Any
