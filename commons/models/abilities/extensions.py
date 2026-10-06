@@ -40,15 +40,15 @@ class DeathSurge:
 @serde.serde
 class Blast:
 	chance: int = 0
-	range_start: int = 0
-	range_width: int = 0
+	range: tuple[int, int] = (0, 0)
 
 	def __str__(self):
-		if self.range_width > 0:
+		range_start, range_width = self.range
+		if range_width > 0:
 			return (f"{self.chance}% chance to create a blast between "
-							f"{self.range_start // 4}~{(self.range_start + self.range_width) // 4} range")
+							f"{range_start // 4}~{(range_start + range_width) // 4} range")
 		else:
-			return f"{self.chance}% chance to create a blast at {self.range_start // 4} range"
+			return f"{self.chance}% chance to create a blast at {range_start // 4} range"
 
 @serde.serde(skip_if_default=True, skip_if_none=True)
 class Extension:
