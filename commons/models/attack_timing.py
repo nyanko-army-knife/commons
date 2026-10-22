@@ -42,9 +42,7 @@ class Hit:
 
 @serde.serde(skip_if_default=True)
 class AttackBreakup:
-	hit_0: Hit = serde.field(default_factory=Hit)
-	hit_1: Optional[Hit] = None
-	hit_2: Optional[Hit] = None
+	hits: list[Hit] = serde.field(default_factory=list)
 	backswing: Duration = Duration(-1)
 	cooldown: Duration = Duration(-1)
 
@@ -64,21 +62,37 @@ class AttackBreakup:
 
 	def scale(self, level_mult: float, treasure_mult: float = 0) -> Self:
 		toret = deepcopy(self)
-		if toret.hit_0: toret.hit_0.damage = damage_scale(toret.hit_0.damage, level_mult, treasure_mult)
-		if toret.hit_1: toret.hit_1.damage = damage_scale(toret.hit_1.damage, level_mult, treasure_mult)
-		if toret.hit_2: toret.hit_2.damage = damage_scale(toret.hit_2.damage, level_mult, treasure_mult)
+		if toret.hit_0: toret.hits[0].damage = damage_scale(toret.hit_0.damage, level_mult, treasure_mult)
+		if toret.hit_1: toret.hits[1].damage = damage_scale(toret.hit_1.damage, level_mult, treasure_mult)
+		if toret.hit_2: toret.hits[2].damage = damage_scale(toret.hit_2.damage, level_mult, treasure_mult)
 		return toret
 
-	def hits(self) -> list[Hit]:
-		return [hit for hit in (self.hit_0, self.hit_1, self.hit_2) if hit is not None]
+	@property
+	def hit_0(self) -> Hit:
+		return self.hits[0]
+
+	@property
+	def hit_1(self) -> Optional[Hit]:
+		try:
+			return self.hits[1]
+		except IndexError:
+			return None
+
+
+	@property
+	def hit_2(self) -> Optional[Hit]:
+		try:
+			return self.hits[2]
+		except IndexError:
+			return None
 
 	@property
 	def fullswing(self) -> Duration:
-		return Duration(self.hits()[-1].foreswing + self.backswing)
+		return Duration(self.hits[-1].foreswing + self.backswing)
 
 	@property
 	def cd_effective(self) -> Duration:
-		return Duration(self.hits()[-1].foreswing + max(self.backswing, self.cooldown - Duration(1)))
+		return Duration(self.hits[-1].foreswing + max(self.backswing, self.cooldown - Duration(1)))
 
 	@property
 	def tba(self) -> Duration:

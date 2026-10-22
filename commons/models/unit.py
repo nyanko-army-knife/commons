@@ -60,7 +60,7 @@ class Form(Entity):
 		toret = deepcopy(self)
 		mult = 1 + sum(curve[i // 10] for i in range(1, level)) / 100
 		toret.breakup = toret.breakup.scale(mult, 1.5)
-		toret.damage = int(sum(hit.damage for hit in toret.breakup.hits()))
+		toret.damage = int(sum(hit.damage for hit in toret.breakup.hits))
 		toret.health = int(round(toret.health * mult) * 2.5)
 		toret.cooldown = Duration(max(toret.cooldown * 2 - 264, 48))  # (research_level - 1) * 6 + treasures * 30
 		return toret
@@ -85,17 +85,34 @@ class Cat:
 	max_levels: tuple[int, int, int] = (-1, -1, -1)  # max level, max level with catseyes, max plus level
 	unlock_method: UnlockMethod = intenum_field(UnlockMethod)
 
-	base_form: Optional[Form] = None
-	evolved_form: Optional[Form] = None
-	true_form: Optional[Form] = None
-	ultra_form: Optional[Form] = None
+	forms: list[Form] = field(default_factory=list)
+
+	@property
+	def base_form(self) -> Optional[Form]:
+		return self.forms[0]
+
+	@property
+	def evolved_form(self) -> Optional[Form]:
+		return self.forms[1]
+
+	@property
+	def true_form(self) -> Optional[Form]:
+		try:
+			return self.forms[2]
+		except IndexError:
+			return None
+
+	@property
+	def ultra_form(self) -> Optional[Form]:
+		try:
+			return self.forms[3]
+		except IndexError:
+			return None
 
 	@property
 	def levelcap(self):
 		return self.max_levels[1] + self.max_levels[2]
 
-	def forms(self) -> list[Form]:
-		return [form for form in (self.base_form, self.evolved_form, self.true_form, self.ultra_form) if form is not None]
 
 	def form_to_level(self, try_form_id: int, try_level: int, upcast: bool = False) -> tuple[Form, int]:
 		"""
@@ -104,7 +121,7 @@ class Cat:
 		if told to upcast, will upcast level instead of downcasting form.
 		"""
 		try_level = min(try_level, self.levelcap)
-		try_form_id = try_form_id % len(self.forms())
+		try_form_id = try_form_id % len(self.forms)
 		level, form_id = try_level, try_form_id
 
 		if not upcast:  # we are sure about level
@@ -123,7 +140,7 @@ class Cat:
 				level = max(20, self.tf_level)
 			elif try_form_id == FormID.ULTRA and try_level < self.uf_level:
 				level = self.uf_level
-		form_id = min(form_id, len(self.forms()) - 1)
+		form_id = min(form_id, len(self.forms) - 1)
 		return self[form_id].to_level(level, self.level_curve), level
 
 	def to_level(self, level: int) -> Self:
@@ -135,14 +152,14 @@ class Cat:
 		fill_cat_curve = apply_level_curve(level, self.level_curve)
 
 		if toret.base_form:
-			toret.base_form = fill_cat_curve(toret.base_form.to_level)()
+			toret.forms[0] = fill_cat_curve(toret.base_form.to_level)()
 		if toret.evolved_form:
-			toret.evolved_form = fill_cat_curve(toret.evolved_form.to_level)()
+			toret.forms[1] = fill_cat_curve(toret.evolved_form.to_level)()
 		if toret.true_form:
-			toret.true_form = fill_cat_curve(toret.true_form.to_level)()
+			toret.forms[2] = fill_cat_curve(toret.true_form.to_level)()
 		if toret.ultra_form:
-			toret.ultra_form = fill_cat_curve(toret.ultra_form.to_level)()
+			toret.forms[3] = fill_cat_curve(toret.ultra_form.to_level)()
 		return toret
 
 	def __getitem__(self, item):
-		return self.forms()[item]
+		return self.forms[item]

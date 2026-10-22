@@ -42,11 +42,11 @@ def load_cats():
 	for i, cat in enumerate(c):
 		if cat is None: continue
 		cat.id_ = i
-		for j, form in enumerate(cat.forms()):
+		for j, form in enumerate(cat.forms):
 			form.id_ = (i, FormID(j))
 
 	units = Index[Cat](c, lambda x: str(x.id_), None)
-	forms = Index[Form](list(itertools.chain(*(cat.forms() for cat in c if cat is not None))), attrgetter("name"),
+	forms = Index[Form](list(itertools.chain(*(cat.forms for cat in c if cat is not None))), attrgetter("name"),
 											lambda x: x.aliases)
 
 

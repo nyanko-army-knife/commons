@@ -14,5 +14,5 @@ class Enemy(Entity):
 		toret = deepcopy(self)
 		toret.health = int(self.health * (hp / 100))
 		toret.breakup = toret.breakup.scale(atk / 100)
-		toret.damage = int(sum(hit.damage for hit in toret.breakup.hits()))
+		toret.damage = int(sum(hit.damage for hit in toret.breakup.hits))
 		return toret
