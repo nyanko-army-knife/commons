@@ -70,17 +70,19 @@ class Form(Entity):
 		return 'fcsu'[self.id_[-1]]
 
 @serde.serde(skip_if_default=True)
+class EvoReqs:
+  level: int = 0
+  xp: int = 0
+  items: list[tuple[int, int]] = serde.field(default_factory=list)
+
+@serde.serde(skip_if_default=True)
 class Cat:
 	id_: int = 0
 	level_curve: list[int] = serde.field(default_factory=list)
 	xp_curve: list[int] = serde.field(default_factory=list)
 	rarity: Rarity = intenum_field(Rarity)
-	tf_reqs: list[tuple[int, int]] = serde.field(default_factory=list)
-	tf_level: int = 0
-	tf_xp: int = 0
-	uf_reqs: list[tuple[int, int]] = serde.field(default_factory=list)
-	uf_level: int = 0
-	uf_xp: int = 0
+	true_form_reqs: Optional[EvoReqs] = None
+	ultra_form_reqs: Optional[EvoReqs] = None
 	guide_order: int = 0
 	max_levels: tuple[int, int, int] = (-1, -1, -1)  # max level, max level with catseyes, max plus level
 	unlock_method: UnlockMethod = intenum_field(UnlockMethod)
@@ -127,19 +129,19 @@ class Cat:
 		if not upcast:  # we are sure about level
 			if level < 10:
 				form_id = FormID.BASE.value
-			elif level < max(20, self.tf_level):
+			elif level < max(20, self.true_form_reqs.level if self.true_form_reqs else 0):
 				form_id = FormID.EVOLVED.value
-			elif self.uf_level < 0 or level < self.uf_level:
+			elif self.ultra_form_reqs is None or level < self.ultra_form_reqs.level:
 				form_id = FormID.TRUE.value
 			else:
 				form_id = FormID.ULTRA.value
 		else:  # we are sure about form_id
 			if form_id == FormID.EVOLVED and try_level < 10:
 				level = 10
-			if try_form_id == FormID.TRUE and try_level < max(20, self.tf_level):
-				level = max(20, self.tf_level)
-			elif try_form_id == FormID.ULTRA and try_level < self.uf_level:
-				level = self.uf_level
+			if try_form_id == FormID.TRUE and self.true_form_reqs and try_level < max(20, self.true_form_reqs.level):
+				level = max(20, self.true_form_reqs.level)
+			elif try_form_id == FormID.ULTRA and self.ultra_form_reqs and try_level < self.ultra_form_reqs.level:
+				level = self.ultra_form_reqs.level
 		form_id = min(form_id, len(self.forms) - 1)
 		return self[form_id].to_level(level, self.level_curve), level
 
