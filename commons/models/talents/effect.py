@@ -37,6 +37,42 @@ def lerp_level[E: Effect](start: E, end: E, amount: float) -> E:
 		setattr(out, field.name, interp_val)
 	return out
 
+def add_effects[E: Effect](start: E, end: E) -> Effect:
+	out = start
+	for field in dataclasses.fields(start):
+		start_val, end_val = getattr(start, field.name), getattr(end, field.name)
+		try:
+			interp_val = start_val + end_val
+		except TypeError:
+			interp_val = start_val
+		setattr(out, field.name, interp_val)
+	return out
+
+def update_at(obj: Any, target: str, value: Any):
+	steps = target.split(".")
+	if steps[0] in ("immunities", "resistances", "defensives", "offensives"):
+		steps.insert(0,"passives")
+
+	target_node = obj
+	for step in steps[:-1]:
+		target_node = getattr(target_node, step)
+
+	old_val = getattr(target_node, steps[-1])
+	new_val = value
+	if isinstance(old_val, list):
+		new_val = old_val + [value]
+	elif isinstance(old_val, Flag):
+		new_val = old_val | value
+	elif dataclasses.is_dataclass(old_val) and not isinstance(old_val, StatMod):
+		new_val = add_effects(old_val, value)
+
+	setattr(target_node, steps[-1], new_val)
+
+def get_at(obj: Any, target: str):
+	target_node = obj
+	for step in target.split("."):
+		target_node = getattr(target_node, step, None)
+	return target_node
 
 @serde.serde
 class Talent:
@@ -51,32 +87,7 @@ class Talent:
 	applied_traits: Traits = bitflag_field(Traits)
 
 	def apply_level_to(self, level: int, cat: 'Form') -> 'Form':
-		def update_at(obj: Any, target: str, value: Any):
-			steps = target.split(".")
-			if steps[0] in ("immunities", "resistances", "defensives", "offensives"):
-				steps.insert(0,"passives")
-
-			target_node = obj
-			for step in steps[:-1]:
-				target_node = getattr(target_node, step)
-
-			old_val = getattr(target_node, steps[-1])
-			new_val = value
-			if isinstance(old_val, list):
-				new_val = old_val + [value]
-			elif isinstance(old_val, Flag):
-				new_val = old_val | value
-
-			setattr(target_node, steps[-1], new_val)
-
-
-		def get_at(obj: Any, target: str):
-			target_node = obj
-			for step in target.split("."):
-				target_node = getattr(target_node, step, None)
-			return target_node
-
-
+		level = min(level, self.max_level)
 		e = lerp_level(self.effect_min, self.effect_max, level/self.max_level)
 		if isinstance(e, StatMod):
 			curr = get_at(cat, self.target)

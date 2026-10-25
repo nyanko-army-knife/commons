@@ -60,7 +60,7 @@ class Index[T]:
 		target = target.lower()
 		lookups: list[Lookup] = [Lookup(*x) for x in
 														 rapidfuzz.process.extract(target, self.lookup_dict.keys(), scorer=ALGO_QUICK)]
-		if lookups[0].score > QUICK_THRESHOLD or force_quick:
+		if lookups[0].score >= QUICK_THRESHOLD or force_quick:
 			return True, lookups
 		lookups = [Lookup(*x) for x in rapidfuzz.process.extract(target, self.lookup_dict.keys(), scorer=ALGO_SLOW)]
 		return False, lookups

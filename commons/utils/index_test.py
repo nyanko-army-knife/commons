@@ -23,6 +23,7 @@ def test_lookup(subtests):
 		("yelo ragte", "Yellow Nyanko Ranger"),
 		("balrog", "Greater Balrog Cat"),
 		("dancer", "Dancer Cat"),
+		("kaihime", "Narihita Kaihime")
 	]
 	idx.load_cats()
 
