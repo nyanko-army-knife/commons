@@ -1,9 +1,11 @@
+import serde
 from msgspec import field
 
 from commons.models.base import Model
 
 
-class Schematic(Model):
+@serde.serde
+class Schematic:
 	enemy_id: int = 0  # offset by +1?
 	mag_hp: int = 0
 	mag_atk: int = 0
@@ -40,7 +42,8 @@ class Schematic(Model):
 		return "∞" if self.quantity == 0 else f"{self.quantity}"
 
 
-class Stage(Model):
+@serde.serde
+class Stage:
 	id_: tuple[str, int, int] = ("", -1, -1)
 	name: str = ''
 
@@ -68,7 +71,8 @@ class Stage(Model):
 		return f"{self.id_[0]}-{self.id_[1]:03}-{self.id_[2]:02}"
 
 
-class Map(Model):
+@serde.serde
+class Map:
 	id_: tuple[str, int] = ("", -1)
 	name: str = ''
 
@@ -79,7 +83,8 @@ class Map(Model):
 		return f"{self.id_[0]}-{self.id_[1]:03}"
 
 
-class Category(Model):
+@serde.serde
+class Category:
 	id_: str = ""
 
 	maps: list[Map] = field(default_factory=list)

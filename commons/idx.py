@@ -22,7 +22,7 @@ units: Index[Cat]
 forms: Index[Form]
 stages: Index[Stage]
 maps: Index[Map]
-categories: dict[str, Category]
+categories: dict[str, list[Map]]
 combos: Index[Combo]
 talents: dict[int, UnitTalents]
 items: dict[int, Item]
@@ -65,10 +65,16 @@ def load_stages():
 	global stages, maps, categories
 
 	with open('data/db/stages.json') as fl:
-		s = msgspec.json.decode(fl.read(), type=list[Category])
-	stages = Index[Stage](list(itertools.chain(*(map_.stages for cat in s for map_ in cat.maps))), attrgetter("name"), None)
-	maps = Index[Map](list(itertools.chain(*(cat.maps for cat in s))), attrgetter("name"), None)
-	categories = {cat.id_: cat for cat in s}
+		s: dict[str, list[Map]] = serde.json.from_json(dict[str, list[Map]], fl.read())
+
+	for (c, lm) in s.items():
+		for j, m in enumerate(lm):
+			for (k, _st) in enumerate(m.stages):
+				s[c][j].stages[k].id_ = (c, j, k)
+
+	stages = Index[Stage](list(itertools.chain(*(map_.stages for cat in s.values() for map_ in cat))), attrgetter("name"), None)
+	maps = Index[Map](list(itertools.chain(*(cat for cat in s.values()))), attrgetter("name"), None)
+	categories = s
 
 
 def load_combos():

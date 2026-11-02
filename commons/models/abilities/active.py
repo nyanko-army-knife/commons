@@ -59,12 +59,20 @@ class Curse:
 		return t"{self.chance}% chance to curse for {self.duration}"
 
 @serde.serde
-class Toxic:
+class Delay:
 	chance: int = 0
-	amount: int = 0
+	percentage: int = 0
 
 	def text(self) -> Template:
-		return t"{self.chance}% chance to inflict {self.amount}% toxic damage"
+		return t"{self.chance}% chance to inflict {self.percentage}% cooldown delay"
+
+@serde.serde
+class Toxic:
+	chance: int = 0
+	damage: int = 0
+
+	def text(self) -> Template:
+		return t"{self.chance}% chance to inflict {self.damage}% toxic damage"
 
 @serde.serde
 class Dodge:
@@ -82,6 +90,7 @@ class TargetOnly:
 @serde.serde
 class ActiveAbility:
 	slow: Optional[Slow]
+	delay: Optional[Delay]
 	freeze: Optional[Freeze]
 	knockback: Optional[Knockback]
 	weaken: Optional[Weaken]
@@ -93,4 +102,4 @@ class ActiveAbility:
 
 	@property
 	def items(self) -> list[Any]:
-		return [x for x in (self.slow, self.freeze, self.knockback, self.weaken, self.warp, self.curse, self.toxic, self.dodge, self.target_only) if x is not None]
+		return [x for x in (self.slow, self.delay, self.freeze, self.knockback, self.weaken, self.warp, self.curse, self.toxic, self.dodge, self.target_only) if x is not None]
